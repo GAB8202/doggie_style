@@ -27,7 +27,8 @@ class DoggieView extends StatelessWidget {
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor: Colors.blueGrey,
+        //backgroundColor: Colors.blueGrey,
+        backgroundColor: const Color(0xc3e7fdff),
       ),
       body: Container(),
     );
