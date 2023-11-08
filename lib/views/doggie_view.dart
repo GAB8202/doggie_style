@@ -22,11 +22,14 @@ class DoggieView extends StatelessWidget {
             );
           },
         ),
+
         title: Text(
           viewModel.doggieText,
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: TextStyle(fontFamily: 'Indie Flower', fontSize: 36, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
+        //an idea from maggie, can we switch this so that the title is the logo image?
+        //I started this but couldn't quite get size right so
        /* title: IconButton(
           icon: Image.asset('assets/images/DSLogo_blue.png'),
           onPressed: () {},
