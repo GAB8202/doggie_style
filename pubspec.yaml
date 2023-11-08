@@ -95,3 +95,6 @@ flutter:
     - family: Indie Flower
       fonts:
       - asset: assets/fonts/IndieFlower-Regular.ttf
+    - family: Oswald
+      fonts:
+        - asset: assets/fonts/Oswald-VariableFont_wght.ttf
