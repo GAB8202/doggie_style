@@ -11,46 +11,61 @@ class _ProfileViewState extends State<ProfileView> {
   final ProfileViewModel _viewModel = ProfileViewModel();
 
   bool _isEdit = true; // Toggle flag
+  List<bool>isSelected = [true, false];
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Doggie Style'),
-        centerTitle: true,
+        title: Text('Doggie Style',
+        style: TextStyle(fontFamily: 'Indie Flower', fontSize: 36, fontWeight: FontWeight.bold)
+        ),
+          centerTitle: true,
+        backgroundColor: const Color(0xc3e7fdff).withOpacity(.5)
       ),
       body: Column(
         children: [
-          Container(
-            // Toggle bar directly under the AppBar
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                // Edit button
-                ElevatedButton(
-                  onPressed: () => setState(() => _isEdit = true),
-                  child: Text('Edit'),
-                  style: ElevatedButton.styleFrom(
-                    primary: _isEdit ? Colors.blue : Colors.grey,
-                  ),
+          LayoutBuilder(
+            builder: (context,constraints) =>
+                ToggleButtons(
+                  //style ( I basically stole this from Tinder)
+                    color: Colors.black,
+                    selectedColor: Colors.lightBlueAccent,
+                    fillColor: Colors.white,
+                   // borderRadius: BorderRadius.vertical({Radius top = Radius.zero, Radius bottom = Radius.zero}),
+                    
+                    constraints: BoxConstraints.expand(width: (constraints.maxWidth-3)/2),
+                    children: [
+                      Text(
+                        'Edit',
+                      ),
+                      Text(
+                        'Preview',
+                      ),
+                    ],
+
+                    onPressed: (int index){
+                      setState(() {
+                        for (int i = 0; i < isSelected.length; i++) {
+                          isSelected[i] = i == index;
+                          if(index==0){
+                            _isEdit=true;
+                          }
+                          else
+                            _isEdit =false;
+                        }
+                      }
+                      );
+                    },
+                    isSelected: isSelected
                 ),
-                SizedBox(width: 8),
-                // Preview button
-                ElevatedButton(
-                  onPressed: () => setState(() => _isEdit = false),
-                  child: Text('Preview'),
-                  style: ElevatedButton.styleFrom(
-                    primary: !_isEdit ? Colors.blue : Colors.grey,
-                  ),
-                ),
-              ],
-            ),
           ),
           Expanded(
             child: _isEdit ? _buildEditView() : _buildPreviewView(),
           ),
-        ],
-      ),
+        ]
+      )
     );
   }
 
@@ -64,20 +79,25 @@ class _ProfileViewState extends State<ProfileView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               TextFormField(
-                decoration: InputDecoration(labelText: 'Dog Name'),
+
+                decoration: InputDecoration(labelText: 'Dog Name',
+                    labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                 onSaved: (value) => _viewModel.updateDogName(value),
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Dog Age'),
+                decoration: InputDecoration(labelText: 'Dog Age',
+                    labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                 keyboardType: TextInputType.number,
                 onSaved: (value) => _viewModel.updateDogAge(value),
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Dog Breed'),
+                decoration: InputDecoration(labelText: 'Dog Breed',
+                    labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                 onSaved: (value) => _viewModel.updateDogBreed(value),
               ),
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Dog Size'),
+                decoration: InputDecoration(labelText: 'Dog Size',
+                    labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                 items: ['Extra Small', 'Small', 'Medium', 'Large', 'Extra Large']
                     .map((size) => DropdownMenuItem(value: size, child: Text(size)))
                     .toList(),
@@ -96,7 +116,8 @@ class _ProfileViewState extends State<ProfileView> {
                       _viewModel.saveProfile();
                     }
                   },
-                  child: Text('Save Profile'),
+                  child: Text('Save Profile',
+                      style: TextStyle(fontFamily: 'Oswald', fontSize: 18, fontWeight: FontWeight.bold)),
                 ),
               ),
             ],

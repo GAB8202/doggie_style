@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter MVVM Example',
       theme: ThemeData(
         primarySwatch: Colors.blueGrey,
+        fontFamily: 'Oswald',
       ),
       home: DoggieView(viewModel: viewModel),
     );
