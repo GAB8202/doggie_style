@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../models/doggie_model.dart';
 
 class DoggieViewModel extends ChangeNotifier {
-  final DoggieModel _doggieModel = DoggieModel(text: "Doggie Style");
+  final DoggieModel _doggieModel = DoggieModel(text: "Doggie Style",);
 
   String get doggieText => _doggieModel.text;
 

@@ -14,7 +14,7 @@ class DoggieView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.person),
+          icon: Icon(Icons.person, color: const Color(0xffffffff).withOpacity(1)),
           onPressed: () {
             Navigator.push(
               context,
@@ -27,8 +27,14 @@ class DoggieView extends StatelessWidget {
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
+       /* title: IconButton(
+          icon: Image.asset('assets/images/DSLogo_blue.png'),
+          onPressed: () {},
+        ),
+        centerTitle: true,*/
         //backgroundColor: Colors.blueGrey,
-        backgroundColor: const Color(0xc3e7fdff),
+
+        backgroundColor: const Color(0xc3e7fdff).withOpacity(.5),
       ),
       body: Container(),
     );
