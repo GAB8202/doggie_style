@@ -18,81 +18,99 @@ class _ProfileViewState extends State<ProfileView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Doggie Style',
-        style: TextStyle(fontFamily: 'Indie Flower', fontSize: 36, fontWeight: FontWeight.bold)
-        ),
+          title: Transform.scale(
+            scale: 2,
+            child: IconButton(
+              icon: Image.asset('assets/images/DSLogoPaw_white.png'),
+              onPressed: () {},
+            ),
+          ),
           centerTitle: true,
         backgroundColor: const Color(0xc3e7fdff).withOpacity(.5)
       ),
-      body: Column(
-        children: [
-          LayoutBuilder(
-            builder: (context,constraints) =>
-                ToggleButtons(
-                  //style ( I basically stole this from Tinder)
-                    color: Colors.black,
-                    selectedColor: Colors.lightBlueAccent,
-                    fillColor: Colors.white,
-                   // borderRadius: BorderRadius.vertical({Radius top = Radius.zero, Radius bottom = Radius.zero}),
-                    
-                    constraints: BoxConstraints.expand(width: (constraints.maxWidth-3)/2),
-                    children: [
-                      Text(
-                        'Edit',
-                      ),
-                      Text(
-                        'Preview',
-                      ),
-                    ],
 
-                    onPressed: (int index){
-                      setState(() {
-                        for (int i = 0; i < isSelected.length; i++) {
-                          isSelected[i] = i == index;
-                          if(index==0){
-                            _isEdit=true;
+        body: Column(
+            children: [
+              LayoutBuilder(
+                builder: (context,constraints) =>
+
+                    ToggleButtons(
+                      //style ( I basically stole this from Tinder)
+                        renderBorder: false,
+                        color: Colors.black,
+                        selectedColor: Colors.lightBlueAccent,
+                        fillColor: Colors.grey[50],
+                        constraints: BoxConstraints.expand(width: (constraints.maxWidth)/2),
+                        children: [
+
+                           Text(
+                              'Edit',
+                              style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+                            ),
+
+
+                          Text(
+                            'Preview',
+                            style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                        onPressed: (int index){
+                          setState(() {
+                            for (int i = 0; i < isSelected.length; i++) {
+                              isSelected[i] = i == index;
+                              if(index==0){
+                                _isEdit=true;
+                              }
+                              else
+                                _isEdit =false;
+                            }
                           }
-                          else
-                            _isEdit =false;
-                        }
-                      }
-                      );
-                    },
-                    isSelected: isSelected
-                ),
-          ),
-          Expanded(
-            child: _isEdit ? _buildEditView() : _buildPreviewView(),
-          ),
-        ]
-      )
+                          );
+                        },
+                        isSelected: isSelected
+                    ),
+              ),
+              Expanded(
+                child: _isEdit ? _buildEditView() : _buildPreviewView(),
+              ),
+            ]
+        )
     );
   }
 
   Widget _buildEditView() {
     return Scaffold(
       body: Form(
+
         key: _formKey,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            //crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              TextFormField(
 
+              TextFormField(
                 decoration: InputDecoration(labelText: 'Dog Name',
+
                     labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+
+                initialValue: _viewModel.profile.dogName ?? "",
+
                 onSaved: (value) => _viewModel.updateDogName(value),
+
               ),
+
               TextFormField(
                 decoration: InputDecoration(labelText: 'Dog Age',
                     labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                 keyboardType: TextInputType.number,
+                initialValue: _viewModel.profile.dogAge ?? "",
                 onSaved: (value) => _viewModel.updateDogAge(value),
               ),
               TextFormField(
                 decoration: InputDecoration(labelText: 'Dog Breed',
                     labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                initialValue: _viewModel.profile.dogBreed ?? "",
                 onSaved: (value) => _viewModel.updateDogBreed(value),
               ),
               DropdownButtonFormField<String>(
@@ -101,6 +119,7 @@ class _ProfileViewState extends State<ProfileView> {
                 items: ['Extra Small', 'Small', 'Medium', 'Large', 'Extra Large']
                     .map((size) => DropdownMenuItem(value: size, child: Text(size)))
                     .toList(),
+                //value: _viewModel.profile.dogSize ?? '',
                 onChanged: (String? newValue) {
                   // No need to call setState if you don't need to rebuild the UI
                   _viewModel.updateDogSize(newValue);
@@ -117,7 +136,7 @@ class _ProfileViewState extends State<ProfileView> {
                     }
                   },
                   child: Text('Save Profile',
-                      style: TextStyle(fontFamily: 'Oswald', fontSize: 18, fontWeight: FontWeight.bold)),
+                      style: TextStyle(fontFamily: 'Indie Flower', fontSize: 18, fontWeight: FontWeight.bold)),
                 ),
               ),
             ],
@@ -134,10 +153,15 @@ class _ProfileViewState extends State<ProfileView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text('Dog Name: ${_viewModel.profile.dogName ?? "Not set"}'),
-          Text('Dog Age: ${_viewModel.profile.dogAge ?? "Not set"}'),
-          Text('Dog Breed: ${_viewModel.profile.dogBreed ?? "Not set"}'),
-          Text('Dog Size: ${_viewModel.profile.dogSize ?? "Not set"}'),
+          Text('Dog Name: ${_viewModel.profile.dogName ?? "Not set"}',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+          Text('Dog Age: ${_viewModel.profile.dogAge ?? "Not set"}',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+          Text('Dog Breed: ${_viewModel.profile.dogBreed ?? "Not set"}',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+          Text('Dog Size: ${_viewModel.profile.dogSize ?? "Not set"}',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+
           // Add more fields as needed
         ],
       ),
