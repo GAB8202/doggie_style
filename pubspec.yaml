@@ -63,6 +63,11 @@ flutter:
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/images/ #DSLogo_blue.png
+    #- assets/images/DSLogo_white.png
+    #- assets/images/DSLogoPaw_blue.png
+    #- assets/images/DSLogoPaw_white.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -89,3 +94,10 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+  fonts:
+    - family: Indie Flower
+      fonts:
+      - asset: assets/fonts/IndieFlower-Regular.ttf
+    - family: Oswald
+      fonts:
+        - asset: assets/fonts/Oswald-VariableFont_wght.ttf
