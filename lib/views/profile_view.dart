@@ -122,7 +122,7 @@ class _ProfileViewState extends State<ProfileView> {
 
   Widget _buildEditView() {
     Widget _imageSelector(int imageNumber) {
-      return InkWell(
+      return GestureDetector(
         onTap: () => showImagePicker(imageNumber),
         child: Container(
           height: 100,
