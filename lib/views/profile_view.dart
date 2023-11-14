@@ -8,10 +8,52 @@ class ProfileView extends StatefulWidget {
 
 class _ProfileViewState extends State<ProfileView> {
   final _formKey = GlobalKey<FormState>();
-  final ProfileViewModel _viewModel = ProfileViewModel();
+  late ProfileViewModel _viewModel;
+  int currentImageIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = ProfileViewModel();
+    _viewModel.onProfileUpdated = () => setState(() {}); // Set the callback
+  }
 
   bool _isEdit = true; // Toggle flag
   List<bool>isSelected = [true, false];
+
+  List<String> allTraits = [
+    "Friendly", "Playful", "Calm", "Protective", "Curious",
+    "Energetic", "Loyal", "Intelligent", "Independent"
+  ];
+  List<String> selectedTraits = [];
+
+  void showImagePicker(int imageNumber) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Choose a picture"),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <String>[
+                'assets/profile_pics/dog1.jpg',
+                'assets/profile_pics/dog2.jpg',
+                'assets/profile_pics/dog5.jpg',
+              ].map((String asset) {
+                return GestureDetector(
+                  child: Image.asset(asset, width: 100, height: 100),
+                  onTap: () {
+                    _viewModel.selectImage(imageNumber, asset);
+                    Navigator.of(context).pop();
+                  },
+                );
+              }).toList(),
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,16 +121,45 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   Widget _buildEditView() {
-    return Scaffold(
-      body: Form(
+    Widget _imageSelector(int imageNumber) {
+      return InkWell(
+        onTap: () => showImagePicker(imageNumber),
+        child: Container(
+          height: 100,
+          width: 100,
+          decoration: BoxDecoration(
+            color: Colors.grey[300], // Default background color
+            border: Border.all(color: Colors.black),
+            image: _viewModel.getImage(imageNumber) != null
+                ? DecorationImage(
+              image: AssetImage(_viewModel.getImage(imageNumber)!),
+              fit: BoxFit.cover,
+            ) : null,
+          ),
+          child: _viewModel.getImage(imageNumber) == null
+              ? Center(child: Text('Select Image $imageNumber', textAlign: TextAlign.center))
+              : SizedBox(),
+        ),
+      );
+    }
 
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: Form(
         key: _formKey,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            //crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _imageSelector(1),
+                  _imageSelector(2),
+                  _imageSelector(3),
+                ],
+              ),
+            //crossAxisAlignment: CrossAxisAlignment.start
               TextFormField(
                 decoration: InputDecoration(labelText: 'Dog Name',
 
@@ -121,10 +192,37 @@ class _ProfileViewState extends State<ProfileView> {
                     .toList(),
                 //value: _viewModel.profile.dogSize ?? '',
                 onChanged: (String? newValue) {
-                  // No need to call setState if you don't need to rebuild the UI
                   _viewModel.updateDogSize(newValue);
                 },
                 onSaved: (value) => _viewModel.updateDogSize(value),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Text(
+                  "Personality Traits",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+              Wrap(
+                children: allTraits.map((trait) {
+                  return CheckboxListTile(
+                    title: Text(trait),
+                    value: selectedTraits.contains(trait),
+                    onChanged: selectedTraits.length < 3 || selectedTraits.contains(trait)
+                        ? (bool? value) {
+                      if (value == true) {
+                        if (selectedTraits.length < 3) {
+                          selectedTraits.add(trait);
+                        }
+                      } else {
+                        selectedTraits.remove(trait);
+                      }
+                      _viewModel.updatePersonalityTraits(selectedTraits);
+                      setState(() {}); // Update the UI
+                    }
+                        : null,
+                  );
+                }).toList(),
               ),
               SizedBox(height: 20),
               Center(
@@ -153,6 +251,7 @@ class _ProfileViewState extends State<ProfileView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          _imagePreview(),
           Text('Dog Name: ${_viewModel.profile.dogName ?? "Not set"}',
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
           Text('Dog Age: ${_viewModel.profile.dogAge ?? "Not set"}',
@@ -161,9 +260,51 @@ class _ProfileViewState extends State<ProfileView> {
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
           Text('Dog Size: ${_viewModel.profile.dogSize ?? "Not set"}',
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-
-          // Add more fields as needed
+          Text("Personality Traits",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          ..._viewModel.profile.personalityTraits.map((trait) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 4.0),
+              child: Text(
+                trait,
+                style: TextStyle(fontSize: 16),
+              ),
+            );
+          }).toList(),
         ],
+      ),
+    );
+  }
+
+  Widget _imagePreview() {
+    List<String?> selectedImages = [
+      _viewModel.profile.imageAsset1,
+      _viewModel.profile.imageAsset2,
+      _viewModel.profile.imageAsset3,
+    ].where((image) => image != null).toList();
+
+    if (selectedImages.isEmpty) {
+      selectedImages.add('assets/images/DSLogo_white.png');
+    }
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          currentImageIndex = (currentImageIndex + 1) % selectedImages.length;
+        });
+      },
+      child: Container(
+        height: 200,
+        width: 200,
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black),
+          color: Colors.grey[300],
+          image: DecorationImage(
+            image: AssetImage(selectedImages[currentImageIndex]!),
+            fit: BoxFit.cover,
+          ),
+        ),
       ),
     );
   }
