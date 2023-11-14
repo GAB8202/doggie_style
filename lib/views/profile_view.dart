@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:multi_select_flutter/multi_select_flutter.dart';
-import 'package:multiselect_formfield/multiselect_formfield.dart';
 import '../view_models/profile_view_model.dart';
 
 class ProfileView extends StatefulWidget {
@@ -12,6 +10,7 @@ class _ProfileViewState extends State<ProfileView> {
   final _formKey = GlobalKey<FormState>();
   late ProfileViewModel _viewModel;
   int currentImageIndex = 0;
+  int _selectedIndex = 0; // Track the selected index
 
   @override
   void initState() {
@@ -25,7 +24,7 @@ class _ProfileViewState extends State<ProfileView> {
 
   List<String> allTraits = [
     "Friendly", "Playful", "Calm", "Protective", "Curious",
-    "Energetic", "Loyal", "Intelligent", "Independent"
+    "Energetic", "Loyal", "Intelligent", "Independent", "Gentle", "Kid Friendly"
   ];
   List<String> selectedTraits = [];
 
@@ -73,51 +72,76 @@ class _ProfileViewState extends State<ProfileView> {
         backgroundColor: const Color(0xc3e7fdff).withOpacity(.5)
       ),
 
-        body: Column(
-            children: [
-              LayoutBuilder(
-                builder: (context,constraints) =>
-
-                    ToggleButtons(
-                      //style ( I basically stole this from Tinder)
-                        renderBorder: false,
-                        color: Colors.black,
-                        selectedColor: Colors.lightBlueAccent,
-                        fillColor: Colors.grey[50],
-                        constraints: BoxConstraints.expand(width: (constraints.maxWidth)/2),
-                        children: [
-
-                           Text(
-                              'Edit',
-                              style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
-                            ),
-
-
-                          Text(
-                            'Preview',
-                            style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                        onPressed: (int index){
-                          setState(() {
-                            for (int i = 0; i < isSelected.length; i++) {
-                              isSelected[i] = i == index;
-                              if(index==0){
-                                _isEdit=true;
-                              }
-                              else
-                                _isEdit =false;
-                            }
-                          }
-                          );
-                        },
-                        isSelected: isSelected
+        body:Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 5),
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        right: BorderSide(
+                          color: Colors.grey, // Border color for the right side of "Edit"
+                          width: .5, // Border width
+                        ),
+                      ),
                     ),
-              ),
-              Expanded(
-                child: _isEdit ? _buildEditView() : _buildPreviewView(),
-              ),
-            ]
+                   child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedIndex = 0; // Set the selected index to 0 (Edit)
+                          _isEdit = true; // Switch to Edit view
+                        });
+                      },
+                      child: Text(
+                        'Edit',
+                        style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+                      ),
+                      style: ButtonStyle(
+                        foregroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+                          return _selectedIndex == 0 ? Colors.black : Colors.grey;
+                        }),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        left: BorderSide(
+                          color: Colors.grey,
+                          width: .5,
+                        ),
+                      ),
+                    ),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedIndex = 1;
+                          _isEdit = false;
+                        });
+                      },
+                      child: Text(
+                        'Preview',
+                        style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+                      ),
+                      style: ButtonStyle(
+                        foregroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+                          return _selectedIndex == 1 ? Colors.black : Colors.grey;
+                        }),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Expanded(
+              child: _selectedIndex == 0 ? _buildEditView() : _buildPreviewView(),
+            ),
+          ],
         )
     );
   }
@@ -126,9 +150,7 @@ class _ProfileViewState extends State<ProfileView> {
     Widget _imageSelector(int imageNumber) {
       return GestureDetector(
         onTap: () => showImagePicker(imageNumber),
-
         child: Container(
-
           height: 150,
           width:  (MediaQuery.of(context).size.width/3)-6,
           decoration: BoxDecoration(
@@ -166,13 +188,13 @@ class _ProfileViewState extends State<ProfileView> {
             //crossAxisAlignment: CrossAxisAlignment.start
               TextFormField(
                 decoration: InputDecoration(labelText: 'Dog Name',
-
                     labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-
                 initialValue: _viewModel.profile.dogName ?? "",
-
-                onSaved: (value) => _viewModel.updateDogName(value),
-
+                onSaved: (value) {
+                  if (value != "") {
+                    _viewModel.updateDogName(value);
+                  }
+                },
               ),
 
               TextFormField(
@@ -180,13 +202,21 @@ class _ProfileViewState extends State<ProfileView> {
                     labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                 keyboardType: TextInputType.number,
                 initialValue: _viewModel.profile.dogAge ?? "",
-                onSaved: (value) => _viewModel.updateDogAge(value),
+                onSaved: (value) {
+                  if (value != "") {
+                    _viewModel.updateDogAge(value);
+                  }
+                },
               ),
               TextFormField(
                 decoration: InputDecoration(labelText: 'Dog Breed',
                     labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                 initialValue: _viewModel.profile.dogBreed ?? "",
-                onSaved: (value) => _viewModel.updateDogBreed(value),
+                onSaved: (value) {
+                  if (value != "") {
+                    _viewModel.updateDogBreed(value);
+                  }
+                },
               ),
               DropdownButtonFormField<String>(
                 decoration: InputDecoration(labelText: 'Dog Size',
@@ -194,7 +224,7 @@ class _ProfileViewState extends State<ProfileView> {
                 items: ['Extra Small', 'Small', 'Medium', 'Large', 'Extra Large']
                     .map((size) => DropdownMenuItem(value: size, child: Text(size)))
                     .toList(),
-                //value: _viewModel.profile.dogSize ?? '',
+                value: _viewModel.profile.dogSize ?? null,
                 onChanged: (String? newValue) {
                   _viewModel.updateDogSize(newValue);
                 },
@@ -207,7 +237,7 @@ class _ProfileViewState extends State<ProfileView> {
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                 ),
               ),*/
-              Padding(
+              Padding( //this is driving me crazy I can't get it to align to left
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                  child: Column(
                      crossAxisAlignment: CrossAxisAlignment.start,
@@ -223,7 +253,6 @@ class _ProfileViewState extends State<ProfileView> {
 
               ),
 
-
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Wrap(
@@ -231,9 +260,7 @@ class _ProfileViewState extends State<ProfileView> {
                   runSpacing: 8.0,
                   children: allTraits.map((trait) {
                     bool isSelected = selectedTraits.contains(trait);
-
                     return ElevatedButton(
-
                       onPressed: () {
                         setState(() {
                           if (isSelected) {
@@ -262,6 +289,9 @@ class _ProfileViewState extends State<ProfileView> {
               SizedBox(height: 20),
               Center(
                 child: ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Color(0xc3e7fdff).withOpacity(.5)),
+                  ),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
@@ -282,7 +312,7 @@ class _ProfileViewState extends State<ProfileView> {
   Widget _buildPreviewView() {
     // This is where you display the read-only profile info
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
+      padding:  EdgeInsets.all(((MediaQuery.of(context).size.width)-300)/2),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -335,45 +365,30 @@ class _ProfileViewState extends State<ProfileView> {
               ],
             ),
           ),
-         /* RichText(
-            text: TextSpan(
-              text: 'Personality Traits:',
-              style: TextStyle(fontFamily: 'Indie Flower',fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
-              children: [
-                TextSpan(
-                    text: '  ${_viewModel.profile.dogAge ?? "Not set"}',
-                    style: TextStyle(fontFamily: 'Oswald',fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black)
-                ),
-              ],
-            ),
-          ),*/
-          /*Text('Dog Name: ${_viewModel.profile.dogName ?? "Not set"}',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          Text('Dog Age: ${_viewModel.profile.dogAge ?? "Not set"}',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),*/
-          //Text('Dog Breed: ${_viewModel.profile.dogBreed ?? "Not set"}',
-              //style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          //Text('Dog Size: ${_viewModel.profile.dogSize ?? "Not set"}',
-              //style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          Padding( padding: const EdgeInsets.all(5.0),),
+
+          Padding( padding: const EdgeInsets.all(8.0),),
           Text("Personality Traits:",
               style: TextStyle(fontFamily: 'Indie Flower',fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          ..._viewModel.profile.personalityTraits.map((trait) {
-            return Padding(
-              padding: const EdgeInsets.only(top: 4.0, left: 16.0),
-              child: Text(
-                trait,
-                style: TextStyle( fontSize: 24, fontWeight: FontWeight.bold),
+          Wrap(
+            direction: Axis.horizontal,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 4.0, left: 32.0),
+                child: Text(
+                  _viewModel.profile.personalityTraits.join(', '),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
               ),
-            );
-          }).toList(),
+            ],
+          ),
         ],
       ),
     );
   }
 
   Widget _imagePreview() {
+
     List<String?> selectedImages = [
       _viewModel.profile.imageAsset1,
       _viewModel.profile.imageAsset2,
@@ -395,7 +410,7 @@ class _ProfileViewState extends State<ProfileView> {
         width: 300,
         decoration: BoxDecoration(
           //border: Border.all(color: Colors.black),
-          borderRadius: BorderRadius.circular(5),
+          borderRadius: BorderRadius.circular(10),
           color: Colors.grey[300],
           image: DecorationImage(
             image: AssetImage(selectedImages[currentImageIndex]!),
