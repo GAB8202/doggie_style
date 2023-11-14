@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
+import 'package:multiselect_formfield/multiselect_formfield.dart';
 import '../view_models/profile_view_model.dart';
 
 class ProfileView extends StatefulWidget {
@@ -124,9 +126,11 @@ class _ProfileViewState extends State<ProfileView> {
     Widget _imageSelector(int imageNumber) {
       return GestureDetector(
         onTap: () => showImagePicker(imageNumber),
+
         child: Container(
-          height: 100,
-          width: 100,
+
+          height: 150,
+          width:  (MediaQuery.of(context).size.width/3)-6,
           decoration: BoxDecoration(
             color: Colors.grey[300], // Default background color
             border: Border.all(color: Colors.black),
@@ -144,11 +148,11 @@ class _ProfileViewState extends State<ProfileView> {
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(0.0),
       child: Form(
         key: _formKey,
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             children: <Widget>[
             Row(
@@ -196,33 +200,64 @@ class _ProfileViewState extends State<ProfileView> {
                 },
                 onSaved: (value) => _viewModel.updateDogSize(value),
               ),
-              Padding(
+              /*Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: Text(
                   "Personality Traits",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+              ),*/
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                 child: Column(
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                  // textDirection: TextDirection.ltr,
+                   children: <Widget>[
+                     Text(
+                       "Personality Traits",
+                       style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey[600]),
+                       textAlign: TextAlign.left, //I can't figure this out
+                     ),
+                   ]
+                ),
+
+              ),
+
+
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Wrap(
+                  spacing: 8.0,
+                  runSpacing: 8.0,
+                  children: allTraits.map((trait) {
+                    bool isSelected = selectedTraits.contains(trait);
+
+                    return ElevatedButton(
+
+                      onPressed: () {
+                        setState(() {
+                          if (isSelected) {
+                            selectedTraits.remove(trait);
+                          } else {
+                            selectedTraits.add(trait);
+                          }
+                        });
+                        _viewModel.updatePersonalityTraits(selectedTraits);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: isSelected ? const Color(0x006400).withOpacity(.5) : const Color(0xc3e7fdff).withOpacity(.5),
+                      ),
+                      child: Text(trait),
+                    );
+                  }).toList(),
                 ),
               ),
-              Wrap(
-                children: allTraits.map((trait) {
-                  return CheckboxListTile(
-                    title: Text(trait),
-                    value: selectedTraits.contains(trait),
-                    onChanged: selectedTraits.length < 3 || selectedTraits.contains(trait)
-                        ? (bool? value) {
-                      if (value == true) {
-                        if (selectedTraits.length < 3) {
-                          selectedTraits.add(trait);
-                        }
-                      } else {
-                        selectedTraits.remove(trait);
-                      }
-                      _viewModel.updatePersonalityTraits(selectedTraits);
-                      setState(() {}); // Update the UI
-                    }
-                        : null,
-                  );
-                }).toList(),
+              const Divider(
+                height: 20,
+                thickness: 1,
+                indent: 0,
+                endIndent: 0,
+                color: Colors.grey,
               ),
               SizedBox(height: 20),
               Center(
@@ -252,23 +287,84 @@ class _ProfileViewState extends State<ProfileView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           _imagePreview(),
-          Text('Dog Name: ${_viewModel.profile.dogName ?? "Not set"}',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+          RichText(
+            text: TextSpan(
+              text: 'Dog Name:',
+              style: TextStyle(fontFamily: 'Indie Flower',fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+              children: [
+                TextSpan(
+                  text: '  ${_viewModel.profile.dogName ?? "Not set"}',
+                    style: TextStyle(fontFamily: 'Oswald',fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black)
+                ),
+              ],
+            ),
+          ),
+          RichText(
+            text: TextSpan(
+              text: 'Dog Age:',
+              style: TextStyle(fontFamily: 'Indie Flower',fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+              children: [
+                TextSpan(
+                    text: '  ${_viewModel.profile.dogAge ?? "Not set"}',
+                    style: TextStyle(fontFamily: 'Oswald',fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black)
+                ),
+              ],
+            ),
+          ),
+          RichText(
+            text: TextSpan(
+              text: 'Dog Breed:',
+              style: TextStyle(fontFamily: 'Indie Flower',fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+              children: [
+                TextSpan(
+                    text: '  ${_viewModel.profile.dogBreed ?? "Not set"}',
+                    style: TextStyle(fontFamily: 'Oswald',fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black)
+                ),
+              ],
+            ),
+          ),
+          RichText(
+            text: TextSpan(
+              text: 'Dog Size:',
+              style: TextStyle(fontFamily: 'Indie Flower',fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+              children: [
+                TextSpan(
+                    text: '  ${_viewModel.profile.dogSize ?? "Not set"}',
+                    style: TextStyle(fontFamily: 'Oswald',fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black)
+                ),
+              ],
+            ),
+          ),
+         /* RichText(
+            text: TextSpan(
+              text: 'Personality Traits:',
+              style: TextStyle(fontFamily: 'Indie Flower',fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+              children: [
+                TextSpan(
+                    text: '  ${_viewModel.profile.dogAge ?? "Not set"}',
+                    style: TextStyle(fontFamily: 'Oswald',fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black)
+                ),
+              ],
+            ),
+          ),*/
+          /*Text('Dog Name: ${_viewModel.profile.dogName ?? "Not set"}',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           Text('Dog Age: ${_viewModel.profile.dogAge ?? "Not set"}',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-          Text('Dog Breed: ${_viewModel.profile.dogBreed ?? "Not set"}',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-          Text('Dog Size: ${_viewModel.profile.dogSize ?? "Not set"}',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-          Text("Personality Traits",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),*/
+          //Text('Dog Breed: ${_viewModel.profile.dogBreed ?? "Not set"}',
+              //style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          //Text('Dog Size: ${_viewModel.profile.dogSize ?? "Not set"}',
+              //style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Padding( padding: const EdgeInsets.all(5.0),),
+          Text("Personality Traits:",
+              style: TextStyle(fontFamily: 'Indie Flower',fontSize: 18, fontWeight: FontWeight.bold),
           ),
           ..._viewModel.profile.personalityTraits.map((trait) {
             return Padding(
-              padding: const EdgeInsets.only(top: 4.0),
+              padding: const EdgeInsets.only(top: 4.0, left: 16.0),
               child: Text(
                 trait,
-                style: TextStyle(fontSize: 16),
+                style: TextStyle( fontSize: 24, fontWeight: FontWeight.bold),
               ),
             );
           }).toList(),
@@ -295,14 +391,17 @@ class _ProfileViewState extends State<ProfileView> {
         });
       },
       child: Container(
-        height: 200,
-        width: 200,
+        height: 450,
+        width: 300,
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.black),
+          //border: Border.all(color: Colors.black),
+          borderRadius: BorderRadius.circular(5),
           color: Colors.grey[300],
           image: DecorationImage(
             image: AssetImage(selectedImages[currentImageIndex]!),
-            fit: BoxFit.cover,
+            fit: selectedImages[currentImageIndex] == 'assets/images/DSLogo_white.png'
+                ? BoxFit.fitWidth // Set BoxFit to the desired value when the condition is true
+                : BoxFit.cover,
           ),
         ),
       ),
