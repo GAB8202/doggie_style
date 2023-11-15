@@ -261,6 +261,11 @@ class _ProfileViewState extends State<ProfileView> {
                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey[600]),
                        textAlign: TextAlign.left, //I can't figure this out
                      ),
+                     Text(
+                       "Select up to 3",
+                       style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey[600]),
+                       textAlign: TextAlign.center, //I can't figure this out
+                     ),
                    ]
                 ),
 
