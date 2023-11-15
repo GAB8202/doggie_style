@@ -81,7 +81,6 @@ class _ProfileViewState extends State<ProfileView> {
           actions: [
             IconButton(
             icon:  Icon(Icons.settings,color: Colors.white.withOpacity(1)),
-            tooltip: 'Open shopping cart',
             onPressed: () {
               Navigator.push(
                 context,
@@ -280,7 +279,13 @@ class _ProfileViewState extends State<ProfileView> {
                           if (isSelected) {
                             selectedTraits.remove(trait);
                           } else {
-                            selectedTraits.add(trait);
+                            if (selectedTraits.length >= 3) {
+                              // Remove the first selected trait and add the new one
+                              selectedTraits.removeAt(0);
+                              selectedTraits.add(trait);
+                            } else {
+                              selectedTraits.add(trait);
+                            }
                           }
                         });
                         _viewModel.updatePersonalityTraits(selectedTraits);
