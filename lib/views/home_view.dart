@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:navigation/views/message_view.dart';
 import 'profile_view.dart';
 
 class HomeView extends StatelessWidget {
@@ -29,8 +30,21 @@ class HomeView extends StatelessWidget {
           ),
         ),
         backgroundColor: Color(0xc3e7fdff).withOpacity(.5),
+        actions: [
+          IconButton(
+            icon:  Icon(Icons.mail_rounded,color: Colors.white.withOpacity(1)),
+            tooltip: 'Open shopping cart',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MessageView()),
+              );
+            },
+          ),
+        ],
       ),
       body: Container(),
+
     );
   }
 }

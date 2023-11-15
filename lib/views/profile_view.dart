@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../view_models/profile_view_model.dart';
+import 'settings_view.dart';
 
 class ProfileView extends StatefulWidget {
   @override
@@ -40,7 +41,7 @@ class _ProfileViewState extends State<ProfileView> {
                 'assets/profile_pics/dog1.jpg',
                 'assets/profile_pics/dog2.jpg',
                 'assets/profile_pics/dog5.jpg',
-                'assets/profile_pics/dog3.jpg',
+                //
               ].map((String asset) {
                 return GestureDetector(
                   child: Image.asset(asset, width: 100, height: 100),
@@ -70,7 +71,19 @@ class _ProfileViewState extends State<ProfileView> {
             ),
           ),
           centerTitle: true,
-        backgroundColor: const Color(0xc3e7fdff).withOpacity(.5)
+          backgroundColor: const Color(0xc3e7fdff).withOpacity(.5),
+          actions: [
+            IconButton(
+            icon:  Icon(Icons.settings,color: Colors.white.withOpacity(1)),
+            tooltip: 'Open shopping cart',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingView()),
+              );
+            },
+          ),
+          ],
       ),
 
         body:Column(
