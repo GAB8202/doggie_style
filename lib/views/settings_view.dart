@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:navigation/views/home_view.dart';
 
 
 class SettingView extends StatelessWidget {
@@ -17,7 +18,11 @@ class SettingView extends StatelessWidget {
           scale: 2,
           child: IconButton(
             icon: Image.asset('assets/images/DSLogoPaw_white.png'),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => HomeView()),
+            );},
           ),
         ),
         backgroundColor: Color(0xc3e7fdff).withOpacity(.5),

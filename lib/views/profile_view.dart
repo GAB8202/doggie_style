@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:navigation/views/home_view.dart';
 import '../view_models/profile_view_model.dart';
 import 'settings_view.dart';
 
@@ -67,7 +68,12 @@ class _ProfileViewState extends State<ProfileView> {
             scale: 2,
             child: IconButton(
               icon: Image.asset('assets/images/DSLogoPaw_white.png'),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeView()),
+                );
+              },
             ),
           ),
           centerTitle: true,
