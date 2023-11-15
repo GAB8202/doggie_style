@@ -40,6 +40,7 @@ class _ProfileViewState extends State<ProfileView> {
                 'assets/profile_pics/dog1.jpg',
                 'assets/profile_pics/dog2.jpg',
                 'assets/profile_pics/dog5.jpg',
+                'assets/profile_pics/dog3.jpg',
               ].map((String asset) {
                 return GestureDetector(
                   child: Image.asset(asset, width: 100, height: 100),
@@ -230,13 +231,7 @@ class _ProfileViewState extends State<ProfileView> {
                 },
                 onSaved: (value) => _viewModel.updateDogSize(value),
               ),
-              /*Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Text(
-                  "Personality Traits",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-              ),*/
+
               Padding( //this is driving me crazy I can't get it to align to left
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                  child: Column(
@@ -409,7 +404,6 @@ class _ProfileViewState extends State<ProfileView> {
         height: 450,
         width: 300,
         decoration: BoxDecoration(
-          //border: Border.all(color: Colors.black),
           borderRadius: BorderRadius.circular(10),
           color: Colors.grey[300],
           image: DecorationImage(
