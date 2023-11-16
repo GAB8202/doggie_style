@@ -35,6 +35,9 @@ class ProfileViewModel {
       case 3:
         _profile.imageAsset3 = selectedAsset;
         break;
+      case 4:
+        _profile.imageAsset4 = selectedAsset;
+        break;
     }
     onProfileUpdated?.call();
   }
@@ -47,6 +50,8 @@ class ProfileViewModel {
         return _profile.imageAsset2;
       case 3:
         return _profile.imageAsset3;
+      case 4:
+        return _profile.imageAsset4;
       default:
         return null;
     }
@@ -65,6 +70,7 @@ class ProfileViewModel {
     print('Image 1: ${_profile.imageAsset1}');
     print('Image 2: ${_profile.imageAsset2}');
     print('Image 3: ${_profile.imageAsset3}');
+    print('Image 4: ${_profile.imageAsset4}');
     print('Personality Traits:');
     for (var trait in _profile.personalityTraits) {
       print(trait);

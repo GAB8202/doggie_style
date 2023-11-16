@@ -185,10 +185,12 @@ class _ProfileViewState extends State<ProfileView> {
         onTap: () => showImagePicker(imageNumber),
         child: Container(
           height: 150,
-          width:  (MediaQuery.of(context).size.width/3)-6,
+          width:  (MediaQuery.of(context).size.width/3)-25,
+          margin: EdgeInsets.symmetric(horizontal: 5.0),
           decoration: BoxDecoration(
             color: Colors.grey[300], // Default background color
             border: Border.all(color: Colors.black),
+            borderRadius: BorderRadius.circular(5),
             image: _viewModel.getImage(imageNumber) != null
                 ? DecorationImage(
               image: AssetImage(_viewModel.getImage(imageNumber)!),
@@ -210,13 +212,16 @@ class _ProfileViewState extends State<ProfileView> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _imageSelector(1),
-                  _imageSelector(2),
-                  _imageSelector(3),
-                ],
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    _imageSelector(1),
+                    _imageSelector(2),
+                    _imageSelector(3),
+                    _imageSelector(4),
+                  ],
+                ),
               ),
             //crossAxisAlignment: CrossAxisAlignment.start
               TextFormField(
@@ -431,6 +436,7 @@ class _ProfileViewState extends State<ProfileView> {
       _viewModel.profile.imageAsset1,
       _viewModel.profile.imageAsset2,
       _viewModel.profile.imageAsset3,
+      _viewModel.profile.imageAsset4,
     ].where((image) => image != null).toList();
 
     if (selectedImages.isEmpty) {
