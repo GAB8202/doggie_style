@@ -275,11 +275,15 @@ class _ProfileViewState extends State<ProfileView> {
                      crossAxisAlignment: CrossAxisAlignment.start,
                   // textDirection: TextDirection.ltr,
                    children: <Widget>[
-                     Text(
-                       "Personality Traits",
-                       style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey[600]),
-                       textAlign: TextAlign.left, //I can't figure this out
+                     Padding(
+                       padding: const EdgeInsets.only(top: 32.0),
+                       child: Text(
+                         "Personality Traits",
+                         style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey[600]),
+                         textAlign: TextAlign.left, //I can't figure this out
+                       ),
                      ),
+
                      Text(
                        "Select up to 3",
                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey[600]),
