@@ -35,37 +35,44 @@ class _ProfileViewState extends State<ProfileView> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Choose a picture", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <String>[
-                'assets/profile_pics/dog1.jpg',
-                'assets/profile_pics/dog2.jpg',
-                'assets/profile_pics/dog5.jpg',
-                'assets/profile_pics/dog7.jpg',
-                'assets/profile_pics/dog6.jpg',
-                'assets/profile_pics/dog8.jpg',
-                'assets/profile_pics/dog9.jpg',
-                'assets/profile_pics/dog13.jpg',
-                'assets/profile_pics/dog14.jpg',
-                'assets/profile_pics/dog15.jpg',
-                'assets/profile_pics/dog16.jpg',
-                //
-              ].map((String asset) {
-                return GestureDetector(
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Image.asset(
-                      asset,
-                      scale: 0.5,
+          title: Text(
+            "Choose a picture",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          content: Scrollbar(
+            thumbVisibility: true,
+             // Ensures that the scrollbar is always visible
+            child: SingleChildScrollView(
+              child: ListBody(
+                children: <String>[
+                  'assets/profile_pics/dog1.jpg',
+                  'assets/profile_pics/dog2.jpg',
+                  'assets/profile_pics/dog5.jpg',
+                  'assets/profile_pics/dog7.jpg',
+                  'assets/profile_pics/dog6.jpg',
+                  'assets/profile_pics/dog8.jpg',
+                  'assets/profile_pics/dog9.jpg',
+                  'assets/profile_pics/dog13.jpg',
+                  'assets/profile_pics/dog14.jpg',
+                  'assets/profile_pics/dog15.jpg',
+                  'assets/profile_pics/dog16.jpg',
+                  // Add more image paths here...
+                ].map((String asset) {
+                  return GestureDetector(
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Image.asset(
+                        asset,
+                        scale: 0.5,
+                      ),
                     ),
-                  ),
-                  onTap: () {
-                    _viewModel.selectImage(imageNumber, asset);
-                    Navigator.of(context).pop();
-                  },
-                );
-              }).toList(),
+                    onTap: () {
+                      _viewModel.selectImage(imageNumber, asset);
+                      Navigator.of(context).pop();
+                    },
+                  );
+                }).toList(),
+              ),
             ),
           ),
         );
