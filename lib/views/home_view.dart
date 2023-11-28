@@ -3,11 +3,18 @@ import 'package:navigation/models/profile_model.dart';
 import 'package:navigation/views/message_view.dart';
 import 'profile_view.dart';
 
-class HomeView extends StatelessWidget {
+
+class HomeView extends StatefulWidget {
   // Pass the title as a parameter if needed, or just hardcode it inside the widget
   final String title;
 
   HomeView({Key? key, this.title = "Doggie Style"}) : super(key: key);
+
+  @override
+  _HomeViewState createState() => _HomeViewState();
+}
+class _HomeViewState extends State<HomeView> {
+  int currentProfileIndex = 0;
   List<ProfileModel> profiles = [
     ProfileModel(
       dogName: 'Buddy',
@@ -89,7 +96,7 @@ class HomeView extends StatelessWidget {
         backgroundColor: Color(0xc3e7fdff).withOpacity(.5),
         actions: [
           IconButton(
-            icon:  Icon(Icons.mail_rounded,color: Colors.white.withOpacity(1)),
+            icon: Icon(Icons.mail_rounded, color: Colors.white.withOpacity(1)),
             onPressed: () {
               Navigator.push(
                 context,
@@ -99,11 +106,85 @@ class HomeView extends StatelessWidget {
           ),
         ],
       ),
-      body:
+      body: Stack(
+        children: [
           ProfileSwipeView(profiles: profiles),
+          Positioned(
+            bottom: 0.0,
+            left: 0.0,
+            child: GestureDetector(
+              onTap: () {
+                removeCurrentProfile();
+
+              },
+              child: Container(
+                width: 100.0,
+                height: 100.0,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(100.0),
+                  ),
+                  color: Colors.red,
+                ),
+                child: Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 25.0, bottom: 25.0),
+                    child: Icon(
+                      Icons.thumb_down,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          Positioned(
+            bottom: 0.0,
+            right: 0.0,
+            child: GestureDetector(
+              onTap: () {
+              },
+              child: Container(
+                width: 100.0,
+                height: 100.0,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(100.0),
+                    //bottomLeft: Radius.circular(10.0),
+                  ),
+                  color: Colors.green,
+                ),
+                child: Align(
+                  alignment: Alignment.bottomRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 25.0, bottom: 25.0),
+                    child: Icon(
+                      Icons.thumb_up,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
 
     );
+
   }
+  void removeCurrentProfile() {
+    setState(() {
+      profiles.removeAt(currentProfileIndex);
+      if (currentProfileIndex < profiles.length) {
+        // If there are more profiles, move to the next one
+        currentProfileIndex++;
+      }
+    });
+  }
+
 }
 
 class ProfileSwipeView extends StatelessWidget {
@@ -143,7 +224,7 @@ class ProfileCard extends StatelessWidget {
             ),
             if (profile.dogName != "Not set")
               Padding(
-                padding: EdgeInsets.only(left: 12.0),
+                padding: EdgeInsets.only(left: 25.0),
                 child: RichText(
                   text: TextSpan(
                     text: 'Dog Name:',
@@ -159,7 +240,7 @@ class ProfileCard extends StatelessWidget {
               ),
             if (profile.dogAge != "Not set")
               Padding(
-                padding: EdgeInsets.only(left: 12.0),
+                padding: EdgeInsets.only(left: 25.0),
                 child: RichText(
                   text: TextSpan(
                     text: 'Dog Age:',
@@ -175,7 +256,7 @@ class ProfileCard extends StatelessWidget {
               ),
             if (profile.dogBreed != "Not set")
               Padding(
-                padding: EdgeInsets.only(left: 12.0),
+                padding: EdgeInsets.only(left: 25.0),
                 child: RichText(
                   text: TextSpan(
                     text: 'Dog Breed:',
@@ -191,7 +272,7 @@ class ProfileCard extends StatelessWidget {
               ),
             if (profile.dogSize != "Not set")
               Padding(
-                padding: EdgeInsets.only(left: 12.0),
+                padding: EdgeInsets.only(left: 25.0),
                 child: RichText(
                   text: TextSpan(
                     text: 'Dog Size:',
@@ -207,7 +288,7 @@ class ProfileCard extends StatelessWidget {
               ),
             if (profile.personalityTraits.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.only(left: 12.0, top: 12.0), // Adjust left padding as needed
+                padding: const EdgeInsets.only(left: 25.0, top: 12.0, bottom: 75), // Adjust left padding as needed
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -228,6 +309,7 @@ class ProfileCard extends StatelessWidget {
                           ],
                         ),
                       ),
+
                   ],
                 ),
               ),
@@ -286,3 +368,4 @@ class _ProfileImagePreviewState extends State<ProfileImagePreview> {
     );
   }
 }
+

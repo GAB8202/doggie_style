@@ -455,6 +455,19 @@ class _ProfileViewState extends State<ProfileView> {
           Text("Personality Traits:",
               style: TextStyle(fontFamily: 'Indie Flower',fontSize: 18, fontWeight: FontWeight.bold),
           ),
+          if (_viewModel.profile.personalityTraits.isEmpty)
+            Padding(
+              padding: const EdgeInsets.only(left: 20.0), // Adjust left padding as needed
+              child: Wrap(
+                direction: Axis.horizontal,
+                children: [
+                  Text(
+                    'None Selected',
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
           Wrap(
             direction: Axis.horizontal,
             children: [
