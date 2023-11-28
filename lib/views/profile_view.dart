@@ -75,6 +75,7 @@ class _ProfileViewState extends State<ProfileView> {
               ),
             ),
           ),
+
         );
       },
     );
@@ -182,7 +183,51 @@ class _ProfileViewState extends State<ProfileView> {
               child: _selectedIndex == 0 ? _buildEditView() : _buildPreviewView(),
             ),
           ],
-        )
+        ),
+
+      //I have thoughts on this positioning but I made the edit for now, Im thinking though
+      //it looks kind of awkward on top of the personality traits
+      //my other idea was to make a whole bottom bar that would be a save button
+      //(you can uncomment the below navigation bar to see what Im talking about)
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      floatingActionButton: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: FloatingActionButton.extended(
+          backgroundColor: Color(0xc3e7fdff).withOpacity(0.5),
+          onPressed: () {
+            if (_formKey.currentState!.validate()) {
+              _formKey.currentState!.save();
+              _viewModel.saveProfile();
+            }
+          },
+          label: Text(
+            'Save Profile',
+            style: TextStyle(fontFamily: 'Indie Flower', fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+      /*bottomNavigationBar: Material(
+        color: const Color(0xc3e7fdff).withOpacity(.5), // Change the background color as needed
+        child: InkWell(
+          onTap: () {
+            // Add your save functionality here
+            print('Save button tapped!');
+          },
+          child: Container(
+            height: 60, // Adjust the height of the button bar
+            child: Center(
+              child: Text(
+                'Save',
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),*/
     );
   }
 
@@ -341,21 +386,7 @@ class _ProfileViewState extends State<ProfileView> {
                 color: Colors.grey,
               ),
               SizedBox(height: 20),
-              Center(
-                child: ElevatedButton(
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Color(0xc3e7fdff).withOpacity(.5)),
-                  ),
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-                      _viewModel.saveProfile();
-                    }
-                  },
-                  child: Text('Save Profile',
-                      style: TextStyle(fontFamily: 'Indie Flower', fontSize: 18, fontWeight: FontWeight.bold)),
-                ),
-              ),
+
             ],
           ),
         ),
