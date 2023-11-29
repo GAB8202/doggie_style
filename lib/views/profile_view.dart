@@ -83,151 +83,159 @@ class _ProfileViewState extends State<ProfileView> {
 
   @override
   Widget build(BuildContext context) {
-
-    return Scaffold(
-      appBar: AppBar(
-          title: Transform.scale(
-            scale: 2,
-            child: IconButton(
-              icon: Image.asset('assets/images/DSLogoPaw_white.png'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomeView()),
-                );
-              },
-            ),
+    return WillPopScope(
+        onWillPop: () async {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => HomeView()),
+                (Route<dynamic> route) => false,
+          );
+          return false; // Prevents the default back button behavior
+        },
+        child: Scaffold(
+          appBar: AppBar(
+              title: Transform.scale(
+                scale: 2,
+                child: IconButton(
+                  icon: Image.asset('assets/images/DSLogoPaw_white.png'),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomeView()),
+                    );
+                  },
+                ),
+              ),
+              centerTitle: true,
+              backgroundColor: const Color(0xc3e7fdff).withOpacity(.5),
+              actions: [
+                IconButton(
+                icon:  Icon(Icons.settings,color: Colors.white.withOpacity(1)),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SettingView()),
+                  );
+                },
+              ),
+              ],
           ),
-          centerTitle: true,
-          backgroundColor: const Color(0xc3e7fdff).withOpacity(.5),
-          actions: [
-            IconButton(
-            icon:  Icon(Icons.settings,color: Colors.white.withOpacity(1)),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SettingView()),
-              );
-            },
-          ),
-          ],
-      ),
 
-        body:Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 5),
-            Row(
+            body:Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border(
-                        right: BorderSide(
-                          color: Colors.grey, // Border color for the right side of "Edit"
-                          width: .5, // Border width
+                SizedBox(height: 5),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            right: BorderSide(
+                              color: Colors.grey, // Border color for the right side of "Edit"
+                              width: .5, // Border width
+                            ),
+                          ),
+                        ),
+                       child: TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _selectedIndex = 0; // Set the selected index to 0 (Edit)
+                              _isEdit = true; // Switch to Edit view
+                            });
+                          },
+                          child: Text(
+                            'Edit',
+                            style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+                          ),
+                          style: ButtonStyle(
+                            foregroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+                              return _selectedIndex == 0 ? Colors.black : Colors.grey;
+                            }),
+                          ),
                         ),
                       ),
                     ),
-                   child: TextButton(
-                      onPressed: () {
-                        setState(() {
-                          _selectedIndex = 0; // Set the selected index to 0 (Edit)
-                          _isEdit = true; // Switch to Edit view
-                        });
-                      },
-                      child: Text(
-                        'Edit',
-                        style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
-                      ),
-                      style: ButtonStyle(
-                        foregroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-                          return _selectedIndex == 0 ? Colors.black : Colors.grey;
-                        }),
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            left: BorderSide(
+                              color: Colors.grey,
+                              width: .5,
+                            ),
+                          ),
+                        ),
+                        child: TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _selectedIndex = 1;
+                              _isEdit = false;
+                            });
+                          },
+                          child: Text(
+                            'Preview',
+                            style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+                          ),
+                          style: ButtonStyle(
+                            foregroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+                              return _selectedIndex == 1 ? Colors.black : Colors.grey;
+                            }),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
                 Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border(
-                        left: BorderSide(
-                          color: Colors.grey,
-                          width: .5,
-                        ),
-                      ),
-                    ),
-                    child: TextButton(
-                      onPressed: () {
-                        setState(() {
-                          _selectedIndex = 1;
-                          _isEdit = false;
-                        });
-                      },
-                      child: Text(
-                        'Preview',
-                        style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
-                      ),
-                      style: ButtonStyle(
-                        foregroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-                          return _selectedIndex == 1 ? Colors.black : Colors.grey;
-                        }),
-                      ),
-                    ),
-                  ),
+                  child: _selectedIndex == 0 ? _buildEditView() : _buildPreviewView(),
                 ),
               ],
             ),
-            Expanded(
-              child: _selectedIndex == 0 ? _buildEditView() : _buildPreviewView(),
-            ),
-          ],
-        ),
 
-      //I have thoughts on this positioning but I made the edit for now, Im thinking though
-      //it looks kind of awkward on top of the personality traits
-      //my other idea was to make a whole bottom bar that would be a save button
-      //(you can uncomment the below navigation bar to see what Im talking about)
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      floatingActionButton: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: FloatingActionButton.extended(
-          backgroundColor: Color(0xc3e7fdff).withOpacity(0.5),
-          onPressed: () {
-            if (_formKey.currentState!.validate()) {
-              _formKey.currentState!.save();
-              _viewModel.saveProfile();
-            }
-          },
-          label: Text(
-            'Save Profile',
-            style: TextStyle(fontFamily: 'Indie Flower', fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-        ),
-      ),
-      /*bottomNavigationBar: Material(
-        color: const Color(0xc3e7fdff).withOpacity(.5), // Change the background color as needed
-        child: InkWell(
-          onTap: () {
-            // Add your save functionality here
-            print('Save button tapped!');
-          },
-          child: Container(
-            height: 60, // Adjust the height of the button bar
-            child: Center(
-              child: Text(
-                'Save',
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+          //I have thoughts on this positioning but I made the edit for now, Im thinking though
+          //it looks kind of awkward on top of the personality traits
+          //my other idea was to make a whole bottom bar that would be a save button
+          //(you can uncomment the below navigation bar to see what Im talking about)
+          floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+          floatingActionButton: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: FloatingActionButton.extended(
+              backgroundColor: Color(0xc3e7fdff).withOpacity(0.5),
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  _formKey.currentState!.save();
+                  _viewModel.saveProfile();
+                }
+              },
+              label: Text(
+                'Save Profile',
+                style: TextStyle(fontFamily: 'Indie Flower', fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
           ),
+          /*bottomNavigationBar: Material(
+            color: const Color(0xc3e7fdff).withOpacity(.5), // Change the background color as needed
+            child: InkWell(
+              onTap: () {
+                // Add your save functionality here
+                print('Save button tapped!');
+              },
+              child: Container(
+                height: 60, // Adjust the height of the button bar
+                child: Center(
+                  child: Text(
+                    'Save',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),*/
         ),
-      ),*/
     );
   }
 
