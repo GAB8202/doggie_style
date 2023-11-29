@@ -3,9 +3,9 @@ import 'package:navigation/models/profile_model.dart';
 import 'package:navigation/views/message_view.dart';
 import 'profile_view.dart';
 
-
+List<ProfileModel> matchedProfiles=[];
+int currentProfileIndex = 0;
 class HomeView extends StatefulWidget {
-  // Pass the title as a parameter if needed, or just hardcode it inside the widget
   final String title;
 
   HomeView({Key? key, this.title = "Doggie Style"}) : super(key: key);
@@ -14,7 +14,7 @@ class HomeView extends StatefulWidget {
   _HomeViewState createState() => _HomeViewState();
 }
 class _HomeViewState extends State<HomeView> {
-  int currentProfileIndex = 0;
+
   List<ProfileModel> profiles = [
     ProfileModel(
       dogName: 'Buddy',
@@ -108,14 +108,43 @@ class _HomeViewState extends State<HomeView> {
       ),
       body: Stack(
         children: [
-          ProfileSwipeView(profiles: profiles),
+          if (currentProfileIndex < profiles.length)
+            ProfileSwipeView(
+              profiles: profiles,
+              removeCurrentProfileCallback: removeCurrentProfile,
+              addCurrentProfileCallback: addCurrentProfile,
+            ),
+          if (currentProfileIndex == profiles.length)
+            Positioned.fill(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/images/DSLogo_blue.png',
+                    //height: MediaQuery.of(context).size.height/1.25 ,
+                    //width: MediaQuery.of(context).size.width/1.25 ,
+                  ),
+                  //SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Center(
+                      child: Text(
+                        'No more profiles to show!',
+                        style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold,),
+                          textAlign: TextAlign.center
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           Positioned(
             bottom: 0.0,
             left: 0.0,
             child: GestureDetector(
+
               onTap: () {
                 removeCurrentProfile();
-
               },
               child: Container(
                 width: 100.0,
@@ -145,6 +174,7 @@ class _HomeViewState extends State<HomeView> {
             right: 0.0,
             child: GestureDetector(
               onTap: () {
+                addCurrentProfile();
               },
               child: Container(
                 width: 100.0,
@@ -178,27 +208,72 @@ class _HomeViewState extends State<HomeView> {
   void removeCurrentProfile() {
     setState(() {
       profiles.removeAt(currentProfileIndex);
-      if (currentProfileIndex < profiles.length) {
-        // If there are more profiles, move to the next one
+      if (currentProfileIndex == profiles.length-1){
         currentProfileIndex++;
       }
+      print(currentProfileIndex);
+      print('Removed');
     });
+  }
+  void addCurrentProfile(){
+    matchedProfiles.add(profiles.elementAt(currentProfileIndex));
+    //removeCurrentProfile();
+    printMatchedProfilesNames();
+    print(currentProfileIndex);
+    print('Added');
+
+    setState(() {
+      profiles.removeAt(currentProfileIndex);
+      if (currentProfileIndex == profiles.length-1){
+        currentProfileIndex++;
+      }
+      print(currentProfileIndex);
+
+    });
+
+  }
+  void printMatchedProfilesNames() {
+    for (ProfileModel profile in matchedProfiles) {
+      print(profile.dogName);
+    }
   }
 
 }
 
 class ProfileSwipeView extends StatelessWidget {
   final List<ProfileModel> profiles;
+  final Function removeCurrentProfileCallback;
+  final Function addCurrentProfileCallback;
 
-  const ProfileSwipeView({required this.profiles});
+  const ProfileSwipeView({
+    required this.profiles,
+    required this.removeCurrentProfileCallback,
+    required this.addCurrentProfileCallback,
+  });
 
   @override
   Widget build(BuildContext context) {
     return PageView.builder(
+
       itemCount: profiles.length,
       itemBuilder: (BuildContext context, int index) {
-        return SingleChildScrollView(
-          child: ProfileCard(profile: profiles[index]),
+        currentProfileIndex=index;
+
+        return GestureDetector(
+          onHorizontalDragEnd: (details) {
+            // Check the direction of the swipe
+            if (details.primaryVelocity! < 0) {
+              // Swiped left
+              removeCurrentProfileCallback();
+            }
+            else if (details.primaryVelocity! >= 0) {
+              // Swiped left
+              addCurrentProfileCallback();
+            }
+          },
+          child: SingleChildScrollView(
+            child: ProfileCard(profile: profiles[index]),
+          ),
         );
       },
     );
@@ -309,7 +384,6 @@ class ProfileCard extends StatelessWidget {
                           ],
                         ),
                       ),
-
                   ],
                 ),
               ),
