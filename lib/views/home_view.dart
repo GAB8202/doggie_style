@@ -338,7 +338,7 @@ class ProfileCard extends StatelessWidget {
               alignment: Alignment.center,
               child: ProfileImagePreview(profile: profile),
             ),
-            if (profile.dogName != "Not set")
+            if (profile.dogName != "Not set" &&  profile.dogName!.isNotEmpty)
               Padding(
                 padding: EdgeInsets.only(left: 25.0),
                 child: RichText(
@@ -354,7 +354,7 @@ class ProfileCard extends StatelessWidget {
                   ),
                 ),
               ),
-            if (profile.dogAge != "Not set")
+            if (profile.dogAge != "Not set" &&  profile.dogAge!.isNotEmpty)
               Padding(
                 padding: EdgeInsets.only(left: 25.0),
                 child: RichText(
@@ -370,7 +370,7 @@ class ProfileCard extends StatelessWidget {
                   ),
                 ),
               ),
-            if (profile.dogBreed != "Not set")
+            if (profile.dogBreed != "Not set"&&  profile.dogBreed!.isNotEmpty )
               Padding(
                 padding: EdgeInsets.only(left: 25.0),
                 child: RichText(
@@ -386,7 +386,7 @@ class ProfileCard extends StatelessWidget {
                   ),
                 ),
               ),
-            if (profile.dogSize != "Not set")
+            if (profile.dogSize != "Not set" &&  profile.dogSize!.isNotEmpty)
               Padding(
                 padding: EdgeInsets.only(left: 25.0),
                 child: RichText(
@@ -468,18 +468,7 @@ class _ProfileImagePreviewState extends State<ProfileImagePreview> {
   }
   @override
   Widget build(BuildContext context) {
-    /*List<String?> selectedImages = [
-      widget.profile.imageAsset1,
-      widget.profile.imageAsset2,
-      widget.profile.imageAsset3,
-      widget.profile.imageAsset4,
-    ].where((image) => image != null).toList();
 
-    if (selectedImages.isEmpty) {
-      selectedImages.add('assets/images/DSLogo_white.png');
-    }
-
-     */
     return GestureDetector(
       onTap: () {
         setState(() {

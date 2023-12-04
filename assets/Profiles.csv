@@ -1,21 +1,26 @@
 dogName,dogAge,dogBreed,dogSize,imageAsset1,imageAsset2,imageAsset3,imageAsset4,personalityTraits
-Buddy,,Golden Retriever,Large,assets/profile_pics/dog1.jpg,assets/profile_pics/dog2.jpg,assets/profile_pics/dog3.jpg,assets/profile_pics/dog5.jpg,"Friendly,Playful,Calm"
-Daisy,,Beagle,Medium,assets/profile_pics/dog6.jpg,assets/profile_pics/dog7.jpg,assets/profile_pics/dog8.jpg,assets/profile_pics/dog9.jpg,"Energetic,Friendly,Kid Friendly"
-Rocky,,Siberian Husky,Large,assets/profile_pics/dog13.jpg,assets/profile_pics/dog14.jpg,assets/profile_pics/dog15.jpg,assets/profile_pics/dog16.jpg,"Curious,Independent,Playful"
-Luna,,Labrador Retriever,Large,assets/profile_pics/dog6.jpg,assets/profile_pics/dog8.jpg,assets/profile_pics/dog9.jpg,assets/profile_pics/dog13.jpg,"Gentle,Loyal,Protective"
-Max,,German Shepherd,Large,assets/profile_pics/dog1.jpg,assets/profile_pics/dog3.jpg,assets/profile_pics/dog5.jpg,assets/profile_pics/dog7.jpg,"Energetic,Curious,Loyal"
+Buddy,,Golden Retriever,Large,assets/profile_pics/dog1.jpg,assets/profile_pics/dog2.jpg,assets/profile_pics/dog3.jpg,assets/profile_pics/dog5.jpg,Friendly,Playful,Calm
+Daisy,7,Beagle,Medium,assets/profile_pics/dog6.jpg,assets/profile_pics/dog7.jpg,assets/profile_pics/dog8.jpg,assets/profile_pics/dog9.jpg,Energetic,Friendly,Kid Friendly
+Rocky,,Siberian Husky,Large,assets/profile_pics/dog13.jpg,assets/profile_pics/dog14.jpg,assets/profile_pics/dog15.jpg,assets/profile_pics/dog16.jpg,Curious,Independent,Playful
+Luna,13,Labrador Retriever,Large,assets/profile_pics/dog6.jpg,assets/profile_pics/dog8.jpg,assets/profile_pics/dog9.jpg,assets/profile_pics/dog13.jpg,Gentle,Loyal,Protective
+Max,,German Shepherd,Large,assets/profile_pics/dog1.jpg,assets/profile_pics/dog3.jpg,assets/profile_pics/dog5.jpg,assets/profile_pics/dog7.jpg,Energetic,Curious,Loyal
 Bailey,6,,Medium,assets/profile_pics/dog4.jpg,assets/profile_pics/dog8.jpg,,,Friendly,Intelligent
 Oscar,2,,Large,assets/profile_pics/dog7.jpg,,,,Playful,Energetic,Loyal
 Sophie,4,,Medium,assets/profile_pics/dog11.jpg,assets/profile_pics/dog13.jpg,,,Intelligent,Energetic
 Milo,3,,Small,assets/profile_pics/dog9.jpg,assets/profile_pics/dog10.jpg,,,Curious,Friendly
-Ruby,5,,Large,assets/profile_pics/dog16.jpg,,,,,Loyal,Protective
-Maximus,,Doberman Pinscher,Large,assets/profile_pics/dog12.jpg,assets/profile_pics/dog15.jpg,,Energetic,Alert,Fearless
-Lola,,Corgi,Small,assets/profile_pics/dog14.jpg,,,Playful,Friendly
-Cooper,,Shih Tzu,Small,assets/profile_pics/dog17.jpg,assets/profile_pics/dog18.jpg,,Affectionate,Gentle
-Zoe,,Great Dane,Extra Large,assets/profile_pics/dog19.jpg,,,Friendly,Calm
-Rocky,,Pomeranian,Small,assets/profile_pics/dog20.jpg,,,Curious,Energetic
-Bailey,2,Shiba Inu,Medium,assets/profile_pics/dog18.jpg,assets/profile_pics/dog16.jpg,,Independent,Alert
-Coco,3,Australian Shepherd,Large,assets/profile_pics/dog17.jpg,,,Energetic,Intelligent
-Mia,1,Pug,Small,assets/profile_pics/dog15.jpg,assets/profile_pics/dog14.jpg,,Friendly,Playful
-Buddy,4,Cocker Spaniel,Medium,assets/profile_pics/dog12.jpg,assets/profile_pics/dog13.jpg,,Gentle,Loyal
-Lucy,2,Bulldog,Large,assets/profile_pics/dog11.jpg,,,Courageous,Affectionate
+Ruby,5,,Large,assets/profile_pics/dog16.jpg,,,,Loyal,Protective
+Maximus,,Doberman Pinscher,Large,assets/profile_pics/dog12.jpg,assets/profile_pics/dog15.jpg,,,Energetic,Alert,Fearless
+Lola,,Corgi,Small,assets/profile_pics/dog14.jpg,,,,Playful,Friendly
+Cooper,12,Shih Tzu,Small,assets/profile_pics/dog17.jpg,assets/profile_pics/dog18.jpg,,,Affectionate,Gentle
+Zoe,,Great Dane,Extra Large,assets/profile_pics/dog19.jpg,,,,Friendly,Calm
+Rocky,8,Pomeranian,Small,assets/profile_pics/dog20.jpg,,,,Curious,Energetic
+Bailey,2,Shiba Inu,Medium,assets/profile_pics/dog18.jpg,assets/profile_pics/dog16.jpg,,,Independent,Alert
+Coco,3,Australian Shepherd,Large,assets/profile_pics/dog17.jpg,,,,Energetic,Intelligent
+Mia,1,Pug,Small,assets/profile_pics/dog15.jpg,assets/profile_pics/dog14.jpg,,,Friendly,Playful
+Buddy,4,Cocker Spaniel,Medium,assets/profile_pics/dog12.jpg,assets/profile_pics/dog13.jpg,,,Gentle,Loyal
+Lucy,2,Bulldog,Large,assets/profile_pics/dog11.jpg,,,,Courageous,Affectionate
+Charlie,5,Poodle,Medium,assets/profile_pics/dog14.jpg,assets/profile_pics/dog2.jpg,,,Playful,Smart,Loyal
+Bella,3,Rottweiler,Large,assets/profile_pics/dog10.jpg,assets/profile_pics/dog13.jpg,,,Energetic,Protective,Confident
+Duke,6,Boxer,Extra Large,assets/profile_pics/dog7.jpg,assets/profile_pics/dog8.jpg,assets/profile_pics/dog19.jpg,,Loyal,Active,Friendly
+Sadie,4,Doberman Pinscher,Large,assets/profile_pics/dog12.jpg,assets/profile_pics/dog11.jpg,assets/profile_pics/dog5.jpg,assets/profile_pics/dog31.jpg,Confident,Energetic,Alert
+Rocky,2,Shih Tzu,Small,assets/profile_pics/dog32.jpg,assets/profile_pics/dog13.jpg,assets/profile_pics/dog14.jpg,assets/profile_pics/dog17.jpg,Independent,Curious,Intelligent

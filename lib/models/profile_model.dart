@@ -91,7 +91,7 @@ Future<List<ProfileModel>> readProfilesFromCSV() async {
       imageAsset2: rowData.length > 5 ? rowData[5] : '',
       imageAsset3: rowData.length > 6 ? rowData[6] : '',
       imageAsset4: rowData.length > 7 ? rowData[7] : '',
-      personalityTraits: rowData.length > 8 ? rowData[8].split(',') : [],
+      personalityTraits: rowData.sublist(8),
     );
 
 

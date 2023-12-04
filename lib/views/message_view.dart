@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:navigation/views/home_view.dart';
 
 class MessageView extends StatelessWidget {
-  // Pass the title as a parameter if needed, or just hardcode it inside the widget
   final String title;
 
   MessageView({Key? key, this.title = "Doggie Style"}) : super(key: key);
