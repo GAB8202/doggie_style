@@ -25,7 +25,7 @@ class MessageView extends StatelessWidget {
             },
           ),
         ),
-        backgroundColor: Color(0xc3e7fdff).withOpacity(.5),
+        backgroundColor:  Color(0x64c3e7fd).withOpacity(1),
 
       ),
       body: Container(

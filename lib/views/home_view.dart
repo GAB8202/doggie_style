@@ -1,10 +1,13 @@
+
 import 'package:flutter/material.dart';
 import 'package:navigation/models/profile_model.dart';
 import 'package:navigation/views/message_view.dart';
 import 'profile_view.dart';
+import 'dart:async'; // Import for Timer
 
 List<ProfileModel> matchedProfiles=[];
 int currentProfileIndex = 0;
+int timerLength = 1;
 class HomeView extends StatefulWidget {
   final String title;
 
@@ -15,65 +18,33 @@ class HomeView extends StatefulWidget {
 }
 class _HomeViewState extends State<HomeView> {
 
-  List<ProfileModel> profiles = [
-    ProfileModel(
-      dogName: 'Buddy',
-      dogAge: '3',
-      dogBreed: 'Golden Retriever',
-      dogSize: 'Large',
-      imageAsset1: 'assets/profile_pics/dog1.jpg',
-      imageAsset2: 'assets/profile_pics/dog2.jpg',
-      imageAsset3: 'assets/profile_pics/dog3.jpg',
-      imageAsset4: 'assets/profile_pics/dog5.jpg',
-      personalityTraits: ['Friendly', 'Playful', 'Calm'],
-    ),
-    ProfileModel(
-      dogName: 'Daisy',
-      dogAge: '2',
-      dogBreed: 'Beagle',
-      dogSize: 'Medium',
-      imageAsset1: 'assets/profile_pics/dog6.jpg',
-      imageAsset2: 'assets/profile_pics/dog7.jpg',
-      imageAsset3: 'assets/profile_pics/dog8.jpg',
-      imageAsset4: 'assets/profile_pics/dog9.jpg',
-      personalityTraits: ['Energetic', 'Friendly', 'Kid Friendly'],
-    ),
-    ProfileModel(
-      dogName: 'Rocky',
-      dogAge: '4',
-      dogBreed: 'Siberian Husky',
-      dogSize: 'Large',
-      imageAsset1: 'assets/profile_pics/dog13.jpg',
-      imageAsset2: 'assets/profile_pics/dog14.jpg',
-      imageAsset3: 'assets/profile_pics/dog15.jpg',
-      imageAsset4: 'assets/profile_pics/dog16.jpg',
-      personalityTraits: ['Curious', 'Independent', 'Playful'],
-    ),
-    ProfileModel(
-      dogName: 'Luna',
-      dogAge: '1',
-      dogBreed: 'Labrador Retriever',
-      dogSize: 'Large',
-      imageAsset1: 'assets/profile_pics/dog6.jpg',
-      imageAsset2: 'assets/profile_pics/dog8.jpg',
-      imageAsset3: 'assets/profile_pics/dog9.jpg',
-      imageAsset4: 'assets/profile_pics/dog13.jpg',
-      personalityTraits: ['Gentle', 'Loyal', 'Protective'],
-    ),
-    ProfileModel(
-      dogName: 'Max',
-      dogAge: '5',
-      dogBreed: 'German Shepherd',
-      dogSize: 'Large',
-      imageAsset1: 'assets/profile_pics/dog1.jpg',
-      imageAsset2: 'assets/profile_pics/dog3.jpg',
-      imageAsset3: 'assets/profile_pics/dog5.jpg',
-      imageAsset4: 'assets/profile_pics/dog7.jpg',
-      personalityTraits: ['Energetic', 'Curious', 'Loyal'],
-    ),
-  ];
+  //List<ProfileModel> profiles = readProfilesFromCSV() as List<ProfileModel>;
+
+  Color screenBackgroundColor = Colors.transparent; // Track background color
+  bool isRemovingProfile = false;
+  bool isAddingProfile = false;
+  List<ProfileModel> profiles=[];
+  @override
+  void initState() {
+    super.initState();
+    initializeProfiles();
+  }
+
+  Future<void> initializeProfiles() async {
+    List<ProfileModel> profileList = await readProfilesFromCSV();
+    setState(() {
+      profiles = profileList;
+    });
+  }
   @override
   Widget build(BuildContext context) {
+    if (profiles.isEmpty) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(), // Or any other loading indicator
+        ),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -93,7 +64,7 @@ class _HomeViewState extends State<HomeView> {
             onPressed: () {},
           ),
         ),
-        backgroundColor: Color(0xc3e7fdff).withOpacity(.5),
+        backgroundColor:  Color(0x64c3e7fd).withOpacity(1),
         actions: [
           IconButton(
             icon: Icon(Icons.mail_rounded, color: Colors.white.withOpacity(1)),
@@ -106,111 +77,143 @@ class _HomeViewState extends State<HomeView> {
           ),
         ],
       ),
-      body: Stack(
-        children: [
-          if (currentProfileIndex < profiles.length)
-            ProfileSwipeView(
-              profiles: profiles,
-              removeCurrentProfileCallback: removeCurrentProfile,
-              addCurrentProfileCallback: addCurrentProfile,
-            ),
-          if (currentProfileIndex == profiles.length)
-            Positioned.fill(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/images/DSLogo_blue.png',
-                    //height: MediaQuery.of(context).size.height/1.25 ,
-                    //width: MediaQuery.of(context).size.width/1.25 ,
+      body: GestureDetector(
+
+        child: Container(
+          color: screenBackgroundColor,
+          child: Stack(
+            children: [
+              if (currentProfileIndex < profiles.length)
+                ProfileSwipeView(
+                  profiles: profiles,
+                  removeCurrentProfileCallback: removeCurrentProfile,
+                  addCurrentProfileCallback: addCurrentProfile,
+                  isRemovingProfile: isRemovingProfile,
+                  setScreenState: setScreenState,
+                ),
+              if (currentProfileIndex == profiles.length)
+                Positioned.fill(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/images/DSlogo_blue.png',
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Center(
+                          child: Text(
+                              'No more profiles to show!',
+                              style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold,),
+                              textAlign: TextAlign.center
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  //SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Center(
-                      child: Text(
-                        'No more profiles to show!',
-                        style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold,),
-                          textAlign: TextAlign.center
+                ),
+              Positioned(
+                bottom: 0.0,
+                left: 0.0,
+                child: GestureDetector(
+                  onTap: () {
+                    if (!isRemovingProfile) {
+                      // Change background color to red for 3 seconds when thumbs down button is clicked
+                      setState(() {
+                        screenBackgroundColor = Colors.red;
+                      });
+
+                      Timer(Duration(seconds: timerLength), () {
+                        // Reset background color after 3 seconds
+                        setState(() {
+                          screenBackgroundColor = Colors.transparent;
+                          isRemovingProfile = true;
+                          removeCurrentProfile(); // Remove the profile after 3 seconds
+                        });
+                      });
+                    }
+                  },
+                  child: Container(
+                    width: 100.0,
+                    height: 100.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(100.0),
+                      ),
+                      color: Colors.red,
+                    ),
+                    child: Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 25.0, bottom: 25.0),
+                        child: Icon(
+                          Icons.thumb_down,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
-                ],
-              ),
-            ),
-          Positioned(
-            bottom: 0.0,
-            left: 0.0,
-            child: GestureDetector(
-
-              onTap: () {
-                removeCurrentProfile();
-              },
-              child: Container(
-                width: 100.0,
-                height: 100.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(100.0),
-                  ),
-                  color: Colors.red,
                 ),
-                child: Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 25.0, bottom: 25.0),
-                    child: Icon(
-                      Icons.thumb_down,
-                      color: Colors.white,
+              ),
+              Positioned(
+                bottom: 0.0,
+                right: 0.0,
+                child: GestureDetector(
+                  onTap: () {
+                    if (!isAddingProfile) {
+                      // Change background color to green for 2 seconds when thumbs up button is clicked
+                      setState(() {
+                        screenBackgroundColor = Colors.green;
+                      });
+
+                      Timer(Duration(seconds: timerLength), () {
+                        // Reset background color after 2 seconds
+                        setState(() {
+                          screenBackgroundColor = Colors.transparent;
+                          isAddingProfile = true;
+                          addCurrentProfile(); // Add the profile after 2 seconds
+                        });
+                      });
+                    }
+                  },
+                  child: Container(
+                    child: Container(
+                      width: 100.0,
+                      height: 100.0,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(100.0),
+                        ),
+                        color: Colors.green,
+                      ),
+                      child: Align(
+                        alignment: Alignment.bottomRight,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 25.0, bottom: 25.0),
+                          child: Icon(
+                            Icons.thumb_up,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
+            ],
           ),
-
-          Positioned(
-            bottom: 0.0,
-            right: 0.0,
-            child: GestureDetector(
-              onTap: () {
-                addCurrentProfile();
-              },
-              child: Container(
-                width: 100.0,
-                height: 100.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(100.0),
-                    //bottomLeft: Radius.circular(10.0),
-                  ),
-                  color: Colors.green,
-                ),
-                child: Align(
-                  alignment: Alignment.bottomRight,
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 25.0, bottom: 25.0),
-                    child: Icon(
-                      Icons.thumb_up,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
-
     );
-
   }
+
   void removeCurrentProfile() {
     setState(() {
       profiles.removeAt(currentProfileIndex);
       if (currentProfileIndex == profiles.length-1){
         currentProfileIndex++;
       }
+      isRemovingProfile = false;
       print(currentProfileIndex);
       print('Removed');
     });
@@ -227,6 +230,7 @@ class _HomeViewState extends State<HomeView> {
       if (currentProfileIndex == profiles.length-1){
         currentProfileIndex++;
       }
+      isAddingProfile = false;
       print(currentProfileIndex);
 
     });
@@ -237,6 +241,11 @@ class _HomeViewState extends State<HomeView> {
       print(profile.dogName);
     }
   }
+  void setScreenState(bool removingProfile) {
+    setState(() {
+      isRemovingProfile = removingProfile;
+    });
+  }
 
 }
 
@@ -244,33 +253,65 @@ class ProfileSwipeView extends StatelessWidget {
   final List<ProfileModel> profiles;
   final Function removeCurrentProfileCallback;
   final Function addCurrentProfileCallback;
+  final bool isRemovingProfile;
+  final Function setScreenState;
 
   const ProfileSwipeView({
     required this.profiles,
     required this.removeCurrentProfileCallback,
     required this.addCurrentProfileCallback,
+    required this.isRemovingProfile,
+    required this.setScreenState,
   });
 
   @override
   Widget build(BuildContext context) {
     return PageView.builder(
-
       itemCount: profiles.length,
       itemBuilder: (BuildContext context, int index) {
-        currentProfileIndex=index;
+        currentProfileIndex = index;
 
-        return GestureDetector(
-          onHorizontalDragEnd: (details) {
-            // Check the direction of the swipe
-            if (details.primaryVelocity! < 0) {
+        return Dismissible(
+          key: Key(profiles[index].dogName!), // Provide a unique key for each profile
+          onDismissed: (direction) {
+            if (direction == DismissDirection.endToStart && !isRemovingProfile) {
               // Swiped left
+              setScreenState(true);
               removeCurrentProfileCallback();
-            }
-            else if (details.primaryVelocity! >= 0) {
-              // Swiped left
+            } else if (direction == DismissDirection.startToEnd) {
+              // Swiped right
               addCurrentProfileCallback();
             }
           },
+
+          background: Container(
+            color: Colors.red, // Color for thumbs down
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 20.0),
+                child: Icon(
+                  Icons.thumb_down,
+                  color: Colors.white,
+                  size: 50.0,
+                ),
+              ),
+            ),
+          ),
+          secondaryBackground: Container(
+            color: Colors.green, // Color for thumbs up
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 20.0),
+                child: Icon(
+                  Icons.thumb_up,
+                  color: Colors.white,
+                  size: 50.0,
+                ),
+              ),
+            ),
+          ),
           child: SingleChildScrollView(
             child: ProfileCard(profile: profiles[index]),
           ),
@@ -405,10 +446,29 @@ class ProfileImagePreview extends StatefulWidget {
 
 class _ProfileImagePreviewState extends State<ProfileImagePreview> {
   int currentImageIndex = 0;
+  List<String> selectedImages = [];
 
   @override
+  void initState() {
+    super.initState();
+    initializeSelectedImages();
+  }
+
+  void initializeSelectedImages() {
+    selectedImages = [
+      widget.profile.imageAsset1 ?? '',
+      widget.profile.imageAsset2 ?? '',
+      widget.profile.imageAsset3 ?? '',
+      widget.profile.imageAsset4 ?? '',
+    ].where((image) => image.isNotEmpty).toList();
+
+    if (selectedImages.isEmpty) {
+      selectedImages.add('assets/images/DSlogo_blue.png');
+    }
+  }
+  @override
   Widget build(BuildContext context) {
-    List<String?> selectedImages = [
+    /*List<String?> selectedImages = [
       widget.profile.imageAsset1,
       widget.profile.imageAsset2,
       widget.profile.imageAsset3,
@@ -418,6 +478,8 @@ class _ProfileImagePreviewState extends State<ProfileImagePreview> {
     if (selectedImages.isEmpty) {
       selectedImages.add('assets/images/DSLogo_white.png');
     }
+
+     */
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -442,4 +504,6 @@ class _ProfileImagePreviewState extends State<ProfileImagePreview> {
     );
   }
 }
+
+
 
