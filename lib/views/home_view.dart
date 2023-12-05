@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:navigation/models/profile_model.dart';
-import 'package:navigation/views/message_view.dart';
+import '../views/message_view.dart';
 import 'profile_view.dart';
+import '../view_models/profile_view_model.dart';
 
 
 class HomeView extends StatefulWidget {
   // Pass the title as a parameter if needed, or just hardcode it inside the widget
   final String title;
+  final ProfileViewModel viewModel;
 
-  HomeView({Key? key, this.title = "Doggie Style"}) : super(key: key);
+  HomeView({Key? key, this.title = "Doggie Style", required this.viewModel}) : super(key: key);
 
   @override
   _HomeViewState createState() => _HomeViewState();
 }
 class _HomeViewState extends State<HomeView> {
+  late ProfileViewModel _viewModel = widget.viewModel;
   int currentProfileIndex = 0;
   List<ProfileModel> profiles = [
     ProfileModel(
@@ -81,7 +84,7 @@ class _HomeViewState extends State<HomeView> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ProfileView()),
+              MaterialPageRoute(builder: (context) => ProfileView(viewModel: _viewModel,)),
             );
           },
         ),
@@ -100,7 +103,7 @@ class _HomeViewState extends State<HomeView> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MessageView()),
+                MaterialPageRoute(builder: (context) => MessageView(viewModel: _viewModel)),
               );
             },
           ),
@@ -286,7 +289,7 @@ class ProfileCard extends StatelessWidget {
                   ),
                 ),
               ),
-            if (profile.personalityTraits.isNotEmpty)
+            if (profile.personalityTraits!.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(left: 25.0, top: 12.0, bottom: 75), // Adjust left padding as needed
                 child: Column(
@@ -296,14 +299,14 @@ class ProfileCard extends StatelessWidget {
                       "Personality Traits:",
                       style: TextStyle(fontFamily: 'Indie Flower', fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    if (profile.personalityTraits.isNotEmpty)
+                    if (profile.personalityTraits!.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.only(left: 20.0), // Adjust left padding as needed
                         child: Wrap(
                           direction: Axis.horizontal,
                           children: [
                             Text(
-                              profile.personalityTraits.join(',  '),
+                              profile.personalityTraits!.join(',  '),
                               style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                             ),
                           ],

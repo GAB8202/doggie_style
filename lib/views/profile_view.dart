@@ -1,24 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:navigation/views/home_view.dart';
+import '../views/home_view.dart';
 import '../view_models/profile_view_model.dart';
 import 'settings_view.dart';
 
 class ProfileView extends StatefulWidget {
+  final ProfileViewModel viewModel;
+
+  ProfileView({Key? key, required this.viewModel}) : super(key: key);
+
   @override
   _ProfileViewState createState() => _ProfileViewState();
 }
 
 class _ProfileViewState extends State<ProfileView> {
   final _formKey = GlobalKey<FormState>();
-  late ProfileViewModel _viewModel;
+  late ProfileViewModel _viewModel = widget.viewModel;
   int currentImageIndex = 0;
   int _selectedIndex = 0; // Track the selected index
 
   @override
   void initState() {
     super.initState();
-    _viewModel = ProfileViewModel();
+    // _viewModel = ProfileViewModel();
     _viewModel.onProfileUpdated = () => setState(() {}); // Set the callback
+    if (_viewModel.profile.personalityTraits != null) {
+      selectedTraits = List.from(_viewModel.profile.personalityTraits!);
+    }
   }
 
   bool _isEdit = true; // Toggle flag
@@ -86,7 +93,7 @@ class _ProfileViewState extends State<ProfileView> {
     return WillPopScope(
         onWillPop: () async {
           Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => HomeView()),
+            MaterialPageRoute(builder: (context) => HomeView(viewModel: _viewModel)),
                 (Route<dynamic> route) => false,
           );
           return false; // Prevents the default back button behavior
@@ -100,7 +107,7 @@ class _ProfileViewState extends State<ProfileView> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => HomeView()),
+                      MaterialPageRoute(builder: (context) => HomeView(viewModel: _viewModel)),
                     );
                   },
                 ),
@@ -113,7 +120,7 @@ class _ProfileViewState extends State<ProfileView> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SettingView()),
+                    MaterialPageRoute(builder: (context) => SettingView(viewModel: _viewModel)),
                   );
                 },
               ),
@@ -204,7 +211,7 @@ class _ProfileViewState extends State<ProfileView> {
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
-                  _viewModel.saveProfile();
+                  _viewModel.saveProfile(_viewModel.profile.email);
                 }
               },
               label: Text(
@@ -251,13 +258,13 @@ class _ProfileViewState extends State<ProfileView> {
             color: Colors.grey[300], // Default background color
             border: Border.all(color: Colors.black),
             borderRadius: BorderRadius.circular(5),
-            image: _viewModel.getImage(imageNumber) != null
+            image: _viewModel.getImage(imageNumber) != 'null'
                 ? DecorationImage(
-              image: AssetImage(_viewModel.getImage(imageNumber)!),
+              image: AssetImage(_viewModel.getImage(imageNumber)),
               fit: BoxFit.cover,
             ) : null,
           ),
-          child: _viewModel.getImage(imageNumber) == null
+          child: _viewModel.getImage(imageNumber) == 'null'
               ? Center(child: Text('Select Image $imageNumber', textAlign: TextAlign.center))
               : SizedBox(),
         ),
@@ -319,7 +326,7 @@ class _ProfileViewState extends State<ProfileView> {
               DropdownButtonFormField<String>(
                 decoration: InputDecoration(labelText: 'Dog Size',
                     labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                items: ['Extra Small', 'Small', 'Medium', 'Large', 'Extra Large']
+                items: ['Extra Small', 'Small', 'Medium', 'Large', 'Extra Large', 'null']
                     .map((size) => DropdownMenuItem(value: size, child: Text(size)))
                     .toList(),
                 value: _viewModel.profile.dogSize ?? null,
@@ -463,7 +470,7 @@ class _ProfileViewState extends State<ProfileView> {
           Text("Personality Traits:",
               style: TextStyle(fontFamily: 'Indie Flower',fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          if (_viewModel.profile.personalityTraits.isEmpty)
+          if (_viewModel.profile.personalityTraits!.isEmpty)
             Padding(
               padding: const EdgeInsets.only(left: 20.0), // Adjust left padding as needed
               child: Wrap(
@@ -482,7 +489,7 @@ class _ProfileViewState extends State<ProfileView> {
               Padding(
                 padding: const EdgeInsets.only(top: 4.0, left: 32.0),
                 child: Text(
-                  _viewModel.profile.personalityTraits.join(', '),
+                  _viewModel.profile.personalityTraits!.join(', '),
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
               ),
@@ -500,7 +507,7 @@ class _ProfileViewState extends State<ProfileView> {
       _viewModel.profile.imageAsset2,
       _viewModel.profile.imageAsset3,
       _viewModel.profile.imageAsset4,
-    ].where((image) => image != null).toList();
+    ].where((image) => image != 'null').toList();
 
     if (selectedImages.isEmpty) {
       selectedImages.add('assets/images/DSLogo_white.png');

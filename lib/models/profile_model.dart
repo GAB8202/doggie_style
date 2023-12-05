@@ -7,7 +7,9 @@ class ProfileModel {
   String? imageAsset2;
   String? imageAsset3;
   String? imageAsset4;
-  List<String> personalityTraits;
+  List<String>? personalityTraits;
+  String? email;
+  String? password;
 
-  ProfileModel({this.dogName, this.dogAge, this.dogBreed, this.dogSize, this.imageAsset1, this.imageAsset2, this.imageAsset3,this.imageAsset4, this.personalityTraits = const []});
+  ProfileModel({this.dogName, this.dogAge, this.dogBreed, this.dogSize, this.imageAsset1, this.imageAsset2, this.imageAsset3,this.imageAsset4, this.personalityTraits = const [], this.email, this.password});
 }
