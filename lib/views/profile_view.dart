@@ -113,7 +113,7 @@ class _ProfileViewState extends State<ProfileView> {
                 ),
               ),
               centerTitle: true,
-              backgroundColor: const Color(0xc3e7fdff).withOpacity(.5),
+              backgroundColor: const Color(0x64c3e7fd).withOpacity(1),
               actions: [
                 IconButton(
                 icon:  Icon(Icons.settings,color: Colors.white.withOpacity(1)),
@@ -207,7 +207,7 @@ class _ProfileViewState extends State<ProfileView> {
           floatingActionButton: Padding(
             padding: EdgeInsets.all(16.0),
             child: FloatingActionButton.extended(
-              backgroundColor: Color(0xc3e7fdff).withOpacity(0.5),
+              backgroundColor: Color(0x64c3e7fd).withOpacity(1),
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
@@ -216,7 +216,7 @@ class _ProfileViewState extends State<ProfileView> {
               },
               label: Text(
                 'Save Profile',
-                style: TextStyle(fontFamily: 'Indie Flower', fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontFamily: 'Indie Flower', fontSize: 18, fontWeight: FontWeight.bold,color: Colors.black),
               ),
             ),
           ),
@@ -386,9 +386,9 @@ class _ProfileViewState extends State<ProfileView> {
                         _viewModel.updatePersonalityTraits(selectedTraits);
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: isSelected ? const Color(0x006400).withOpacity(.5) : const Color(0xc3e7fdff).withOpacity(.5),
+                        primary: isSelected ? Colors.green[500] : const Color(0x64c3e7fd).withOpacity(1),
                       ),
-                      child: Text(trait),
+                      child: Text(trait, style: TextStyle(color: Colors.grey[800]),),
                     );
                   }).toList(),
                 ),

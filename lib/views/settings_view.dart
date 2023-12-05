@@ -28,21 +28,43 @@ class SettingView extends StatelessWidget {
             );},
           ),
         ),
-        backgroundColor: Color(0xc3e7fdff).withOpacity(.5),
+        backgroundColor:  Color(0x64c3e7fd).withOpacity(1),
 
       ),
       body: Container(
         child: Column(
           children: [
-            Text("Settings"),
+            //Text("Settings"),
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top:25.0),
+              child: Text("Location Preference",style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,),
+                textAlign: TextAlign.left),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top:0.0),
+              child: DistanceSlider(),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top:25.0),
+              child: Text("Notification Preference",style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,),
+                  textAlign: TextAlign.left),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top:25.0),
+              child: Text("Location",style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,),
+                  textAlign: TextAlign.left),
+            ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
+
         onPressed: () => _showLogoutDialog(context),
-        child: Text('Log out'),
+        child: Text('Log out', style: TextStyle( fontWeight: FontWeight.bold, fontSize: 16),),
+        backgroundColor:  Color(0x64c3e7fd).withOpacity(1),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+
     );
   }
 
@@ -72,6 +94,36 @@ class SettingView extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+}
+
+
+class DistanceSlider extends StatefulWidget {
+  const DistanceSlider({super.key});
+
+  @override
+  State<DistanceSlider> createState() => _DistanceSliderState();
+}
+
+class _DistanceSliderState extends State<DistanceSlider> {
+  double _currentSliderValue = 10;
+
+  @override
+  Widget build(BuildContext context) {
+    return Slider(
+        value: _currentSliderValue,
+        max: 100,
+        divisions: 10,
+        activeColor: Colors.lightBlue[500],
+        inactiveColor: Colors.lightBlue[100],
+        label: _currentSliderValue.round().toString(),
+        onChanged: (double value) {
+          setState(() {
+            _currentSliderValue = value;
+          });
+        },
+
     );
   }
 }

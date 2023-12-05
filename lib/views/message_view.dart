@@ -3,7 +3,6 @@ import '../views/home_view.dart';
 import '../view_models/profile_view_model.dart';
 
 class MessageView extends StatelessWidget {
-  // Pass the title as a parameter if needed, or just hardcode it inside the widget
   final String title;
   final ProfileViewModel viewModel;
 
@@ -27,7 +26,7 @@ class MessageView extends StatelessWidget {
             },
           ),
         ),
-        backgroundColor: Color(0xc3e7fdff).withOpacity(.5),
+        backgroundColor:  Color(0x64c3e7fd).withOpacity(1),
 
       ),
       body: Container(

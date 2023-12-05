@@ -15,40 +15,94 @@ class StartScreen extends StatefulWidget {
 class _StartScreenState extends State<StartScreen> {
   bool showLogin = false;
   bool showSignUp = false;
+  bool isAppBarBlue = false; // Added a flag to track the blue color
   var _viewModel = ProfileViewModel();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: showLogin
-            ? _buildLoginForm()
-            : showSignUp
-            ? _buildSignUpForm()
-            : _buildInitialButtons(),
+      appBar: AppBar(
+        // Add the leading back arrow button
+        leading: showLogin || showSignUp
+            ? IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => setState(() {
+            showLogin = false;
+            showSignUp = false;
+            isAppBarBlue = false; // Set transparency when going back
+          }),
+        )
+            : null,
+        backgroundColor: isAppBarBlue
+            ? const Color(0x64c3e7fd).withOpacity(1)
+            : Colors.transparent, // Set to your desired transparent color
+        elevation: isAppBarBlue ? 1 : 0, // Set elevation based on color
+      ),
+      body: Stack(
+        children: [
+          _buildContent(),
+          Positioned(
+            bottom: 0,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              child: Offstage(
+                offstage: MediaQuery.of(context).viewInsets.bottom > 0,
+                child: Image.asset(
+                  'assets/images/Grass_green.png',
+                  fit: BoxFit.fitWidth, // Shrink the width to fit the screen
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  // Initial buttons view
+  Widget _buildContent() {
+    if (showLogin) {
+      return _buildLoginForm();
+    } else if (showSignUp) {
+      return _buildSignUpForm();
+    } else {
+      return _buildInitialButtons();
+    }
+  }
+
   Widget _buildInitialButtons() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/images/DSlogo_blue.png',
+            ),
+          ],
+        ),
         ElevatedButton(
-          onPressed: () => setState(() => showLogin = true),
-          child: Text('Login'),
+          onPressed: () => setState(() {
+            showLogin = true;
+            isAppBarBlue = true; // Set blue color when login is clicked
+          }),
+          child: Text('Login', style: TextStyle(color: Colors.grey[800])),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0x64c3e7fd).withOpacity(1),
+          ),
         ),
         SizedBox(height: 20),
         OutlinedButton(
-          onPressed: () => setState(() => showSignUp = true),
-          child: Text('Sign Up'),
+          onPressed: () => setState(() {
+            showSignUp = true;
+            isAppBarBlue = true; // Set blue color when sign up is clicked
+          }),
+          child: Text('Sign Up', style: TextStyle(color: Colors.grey[800])),
         ),
       ],
     );
   }
 
-  // Login form view
   Widget _buildLoginForm() {
     final emailController = TextEditingController();
     final passwordController = TextEditingController();
@@ -112,7 +166,10 @@ class _StartScreenState extends State<StartScreen> {
               }
             }
           },
-          child: Text('Login'),
+          child: Text('Login', style: TextStyle(color: Colors.grey[800])),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0x64c3e7fd).withOpacity(1),
+          ),
         ),
         SizedBox(height: 20),
         OutlinedButton(
@@ -120,13 +177,12 @@ class _StartScreenState extends State<StartScreen> {
             showLogin = false;
             showSignUp = true;
           }),
-          child: Text('Sign Up'),
+          child: Text('Sign Up', style: TextStyle(color: Colors.grey[800])),
         ),
       ],
     );
   }
 
-  // Sign-up form view
   Widget _buildSignUpForm() {
     final firstNameController = TextEditingController();
     final lastNameController = TextEditingController();
@@ -136,10 +192,35 @@ class _StartScreenState extends State<StartScreen> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        TextFormField(controller: firstNameController, decoration: InputDecoration(labelText: 'First Name')),
-        TextFormField(controller: lastNameController, decoration: InputDecoration(labelText: 'Last Name')),
-        TextFormField(controller: emailController, decoration: InputDecoration(labelText: 'Email')),
-        TextFormField(controller: passwordController, decoration: InputDecoration(labelText: 'Password'), obscureText: true),
+        Padding(
+          padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+          child: TextFormField(
+            controller: firstNameController,
+            decoration: InputDecoration(labelText: 'First Name'),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+          child: TextFormField(
+            controller: lastNameController,
+            decoration: InputDecoration(labelText: 'Last Name'),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+          child: TextFormField(
+            controller: emailController,
+            decoration: InputDecoration(labelText: 'Email'),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+          child: TextFormField(
+            controller: passwordController,
+            decoration: InputDecoration(labelText: 'Password'),
+            obscureText: true,
+          ),
+        ),
         SizedBox(height: 20),
         ElevatedButton(
           onPressed: () async {
@@ -226,7 +307,10 @@ class _StartScreenState extends State<StartScreen> {
               );
             }
           },
-          child: Text('Sign Up'),
+          child: Text('Sign Up', style: TextStyle(color: Colors.grey[800])),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0x64c3e7fd).withOpacity(1),
+          ),
         ),
         SizedBox(height: 20),
         OutlinedButton(
@@ -234,7 +318,7 @@ class _StartScreenState extends State<StartScreen> {
             showSignUp = false;
             showLogin = true;
           }),
-          child: Text('Login'),
+          child: Text('Login', style: TextStyle(color: Colors.grey[800])),
         ),
       ],
     );

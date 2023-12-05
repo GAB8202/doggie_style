@@ -10,6 +10,7 @@ class ProfileViewModel {
 
   ProfileModel get profile => _profile;
 
+
   void updateDogName(String? value) {
     _profile.dogName = value;
   }
