@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:navigation/models/profile_model.dart';
 import 'package:navigation/views/message_view.dart';
 import 'profile_view.dart';
-import 'dart:async'; // Import for Timer
+import 'dart:async';
 
 List<ProfileModel> matchedProfiles=[];
 int currentProfileIndex = 0;
@@ -18,7 +18,6 @@ class HomeView extends StatefulWidget {
 }
 class _HomeViewState extends State<HomeView> {
 
-  //List<ProfileModel> profiles = readProfilesFromCSV() as List<ProfileModel>;
 
   Color screenBackgroundColor = Colors.transparent; // Track background color
   bool isRemovingProfile = false;
