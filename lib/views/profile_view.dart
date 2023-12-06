@@ -294,7 +294,7 @@ class _ProfileViewState extends State<ProfileView> {
               TextFormField(
                 decoration: InputDecoration(labelText: 'Dog Name',
                     labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                initialValue: _viewModel.profile.dogName ?? "",
+                initialValue: _viewModel.profile.dogName == "null" ? "" : _viewModel.profile.dogName ?? "",
                 onSaved: (value) {
                   if (value != "") {
                     _viewModel.updateDogName(value);
@@ -306,7 +306,7 @@ class _ProfileViewState extends State<ProfileView> {
                 decoration: InputDecoration(labelText: 'Dog Age',
                     labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                 keyboardType: TextInputType.number,
-                initialValue: _viewModel.profile.dogAge ?? "",
+                initialValue: _viewModel.profile.dogAge == "null" ? "" : _viewModel.profile.dogAge ?? "",
                 onSaved: (value) {
                   if (value != "") {
                     _viewModel.updateDogAge(value);
@@ -316,7 +316,7 @@ class _ProfileViewState extends State<ProfileView> {
               TextFormField(
                 decoration: InputDecoration(labelText: 'Dog Breed',
                     labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                initialValue: _viewModel.profile.dogBreed ?? "",
+                initialValue: _viewModel.profile.dogBreed == "null" ? "" : _viewModel.profile.dogBreed ?? "",
                 onSaved: (value) {
                   if (value != "") {
                     _viewModel.updateDogBreed(value);
@@ -507,7 +507,7 @@ class _ProfileViewState extends State<ProfileView> {
       _viewModel.profile.imageAsset2,
       _viewModel.profile.imageAsset3,
       _viewModel.profile.imageAsset4,
-    ].where((image) => image != 'null').toList();
+    ].where((image) => image != null && image != 'null').toList();
 
     if (selectedImages.isEmpty) {
       selectedImages.add('assets/images/DSLogo_white.png');
@@ -526,9 +526,9 @@ class _ProfileViewState extends State<ProfileView> {
           borderRadius: BorderRadius.circular(10),
           color: Colors.grey[300],
           image: DecorationImage(
-            image: AssetImage(selectedImages[currentImageIndex]!),
+            image: AssetImage(selectedImages[currentImageIndex]!) ,
             fit: selectedImages[currentImageIndex] == 'assets/images/DSLogo_white.png'
-                ? BoxFit.fitWidth // Set BoxFit to the desired value when the condition is true
+                ? BoxFit.fitWidth
                 : BoxFit.cover,
           ),
         ),
