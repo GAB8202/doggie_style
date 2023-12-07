@@ -1,27 +1,39 @@
+import 'dart:math';
 
 import 'package:flutter/material.dart';
+//import 'package:flutter/physics.dart';
 import 'package:navigation/models/profile_model.dart';
-import 'package:navigation/views/message_view.dart';
+import '../views/message_view.dart';
 import 'profile_view.dart';
-import 'dart:async';
+import '../view_models/profile_view_model.dart';
+import 'dart:async'; // Import for Timer
 
+List<ProfileModel> likedProfiles=[];
+List<ProfileModel> dislikedProfiles=[];
 List<ProfileModel> matchedProfiles=[];
 int currentProfileIndex = 0;
 int timerLength = 1;
 class HomeView extends StatefulWidget {
   final String title;
+  final ProfileViewModel viewModel;
 
-  HomeView({Key? key, this.title = "Doggie Style"}) : super(key: key);
+
+  HomeView({Key? key, this.title = "Doggie Style", required this.viewModel}) : super(key: key);
 
   @override
   _HomeViewState createState() => _HomeViewState();
 }
 class _HomeViewState extends State<HomeView> {
+  late ProfileViewModel _viewModel = widget.viewModel;
 
+  //List<ProfileModel> profiles = readProfilesFromCSV() as List<ProfileModel>;
 
   Color screenBackgroundColor = Colors.transparent; // Track background color
   bool isRemovingProfile = false;
   bool isAddingProfile = false;
+  bool match=false;
+  bool showMatchedNotification = false;
+  String matchedDogName = '';
   List<ProfileModel> profiles=[];
   @override
   void initState() {
@@ -33,6 +45,19 @@ class _HomeViewState extends State<HomeView> {
     List<ProfileModel> profileList = await readProfilesFromCSV();
     setState(() {
       profiles = profileList;
+    });
+  }
+  void showMatchNotification(String dogName) {
+    setState(() {
+      showMatchedNotification = true;
+      matchedDogName= dogName;
+    });
+
+    // Close the notification bar after 5 seconds
+    Future.delayed(Duration(seconds: 5), () {
+      setState(() {
+        showMatchedNotification = false;
+      });
     });
   }
   @override
@@ -51,7 +76,7 @@ class _HomeViewState extends State<HomeView> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ProfileView()),
+              MaterialPageRoute(builder: (context) => ProfileView(viewModel: _viewModel,)),
             );
           },
         ),
@@ -70,139 +95,183 @@ class _HomeViewState extends State<HomeView> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MessageView()),
+                MaterialPageRoute(builder: (context) => MessageView(viewModel: _viewModel)),
               );
             },
           ),
         ],
       ),
-      body: GestureDetector(
+      body: Stack(
+        children: [
+          GestureDetector(
 
-        child: Container(
-          color: screenBackgroundColor,
-          child: Stack(
-            children: [
-              if (currentProfileIndex < profiles.length)
-                ProfileSwipeView(
-                  profiles: profiles,
-                  removeCurrentProfileCallback: removeCurrentProfile,
-                  addCurrentProfileCallback: addCurrentProfile,
-                  isRemovingProfile: isRemovingProfile,
-                  setScreenState: setScreenState,
-                ),
-              if (currentProfileIndex == profiles.length)
-                Positioned.fill(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/images/DSlogo_blue.png',
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Center(
-                          child: Text(
-                              'No more profiles to show!',
-                              style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold,),
-                              textAlign: TextAlign.center
+            child: Container(
+              color: screenBackgroundColor,
+              child: Stack(
+                children: [
+                  if (currentProfileIndex < profiles.length)
+                    ProfileSwipeView(
+                      profiles: profiles,
+                      removeCurrentProfileCallback: removeCurrentProfile,
+                      addCurrentProfileCallback: addCurrentProfile,
+                      isRemovingProfile: isRemovingProfile,
+                      setScreenState: setScreenState,
+                    ),
+                  if (currentProfileIndex == profiles.length)
+                    Positioned.fill(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/DSlogo_blue.png',
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              Positioned(
-                bottom: 0.0,
-                left: 0.0,
-                child: GestureDetector(
-                  onTap: () {
-                    if (!isRemovingProfile) {
-                      // Change background color to red for 3 seconds when thumbs down button is clicked
-                      setState(() {
-                        screenBackgroundColor = Colors.red;
-                      });
-
-                      Timer(Duration(seconds: timerLength), () {
-                        // Reset background color after 3 seconds
-                        setState(() {
-                          screenBackgroundColor = Colors.transparent;
-                          isRemovingProfile = true;
-                          removeCurrentProfile(); // Remove the profile after 3 seconds
-                        });
-                      });
-                    }
-                  },
-                  child: Container(
-                    width: 100.0,
-                    height: 100.0,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(100.0),
-                      ),
-                      color: Colors.red,
-                    ),
-                    child: Align(
-                      alignment: Alignment.bottomLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 25.0, bottom: 25.0),
-                        child: Icon(
-                          Icons.thumb_down,
-                          color: Colors.white,
-                        ),
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Center(
+                              child: Text(
+                                  'No more profiles to show!',
+                                  style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold,),
+                                  textAlign: TextAlign.center
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 0.0,
-                right: 0.0,
-                child: GestureDetector(
-                  onTap: () {
-                    if (!isAddingProfile) {
-                      // Change background color to green for 2 seconds when thumbs up button is clicked
-                      setState(() {
-                        screenBackgroundColor = Colors.green;
-                      });
+                  Positioned(
+                    bottom: 0.0,
+                    left: 0.0,
+                    child: GestureDetector(
+                      onTap: () {
+                        if (!isRemovingProfile) {
+                          // Change background color to red for 3 seconds when thumbs down button is clicked
+                          setState(() {
+                            screenBackgroundColor = Colors.red;
+                          });
 
-                      Timer(Duration(seconds: timerLength), () {
-                        // Reset background color after 2 seconds
-                        setState(() {
-                          screenBackgroundColor = Colors.transparent;
-                          isAddingProfile = true;
-                          addCurrentProfile(); // Add the profile after 2 seconds
-                        });
-                      });
-                    }
-                  },
-                  child: Container(
-                    child: Container(
-                      width: 100.0,
-                      height: 100.0,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(100.0),
+                          Timer(Duration(seconds: timerLength), () {
+                            // Reset background color after 3 seconds
+                            setState(() {
+                              screenBackgroundColor = Colors.transparent;
+                              isRemovingProfile = true;
+                              removeCurrentProfile(); // Remove the profile after 3 seconds
+                            });
+                          });
+                        }
+                      },
+                      child: Container(
+                        width: 100.0,
+                        height: 100.0,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(100.0),
+                          ),
+                          color: Colors.red,
                         ),
-                        color: Colors.green,
-                      ),
-                      child: Align(
-                        alignment: Alignment.bottomRight,
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 25.0, bottom: 25.0),
-                          child: Icon(
-                            Icons.thumb_up,
-                            color: Colors.white,
+                        child: Align(
+                          alignment: Alignment.bottomLeft,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 25.0, bottom: 25.0),
+                            child: Icon(
+                              Icons.thumb_down,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
+                  Positioned(
+                    bottom: 0.0,
+                    right: 0.0,
+                    child: GestureDetector(
+                      onTap: () {
+                        if (!isAddingProfile) {
+                          Random random = Random();
+                          int randomNumber = random.nextInt(2) + 1;
+
+                          if (randomNumber == 2) {
+                            matchedProfiles.add(profiles.elementAt(currentProfileIndex));
+                            //printLikedProfilesNames();
+                            print(currentProfileIndex);
+                            print('Added to matchedProfiles');
+                            match=true;
+                            showMatchNotification(profiles.elementAt(currentProfileIndex).dogName!);
+
+                          }
+
+                          // Change background color to green for 2 seconds when thumbs up button is clicked
+                          setState(() {
+                            screenBackgroundColor = Colors.green;
+                          });
+
+                          Timer(Duration(seconds: timerLength), () {
+                            // Reset background color after 2 seconds
+                            setState(() {
+                              screenBackgroundColor = Colors.transparent;
+                              isAddingProfile = true;
+                              addCurrentProfile(); // Add the profile after 2 seconds
+                            });
+                          });
+                        }
+                      },
+                      child: Container(
+                        child: Container(
+                          width: 100.0,
+                          height: 100.0,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(100.0),
+                            ),
+                            color: Colors.green,
+                          ),
+                          child: Align(
+                            alignment: Alignment.bottomRight,
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 25.0, bottom: 25.0),
+                              child: Icon(
+                                Icons.thumb_up,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
+          if (showMatchedNotification)
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                color: Colors.green, // Customize the color of the notification bar
+                height: 50, // Set the height of the notification bar
+                child: Center(
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MessageView(viewModel: _viewModel)),
+                      );
+
+                    },
+                    child: Text(
+                      'You matched with $matchedDogName!! Tap to chat',
+                      style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold, fontSize: 25),
+
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      )
+
     );
   }
 
@@ -218,11 +287,14 @@ class _HomeViewState extends State<HomeView> {
     });
   }
   void addCurrentProfile(){
-    matchedProfiles.add(profiles.elementAt(currentProfileIndex));
+    likedProfiles.add(profiles.elementAt(currentProfileIndex));
     //removeCurrentProfile();
-    printMatchedProfilesNames();
+    printlikedProfilesNames();
     print(currentProfileIndex);
     print('Added');
+
+
+
 
     setState(() {
       profiles.removeAt(currentProfileIndex);
@@ -235,8 +307,39 @@ class _HomeViewState extends State<HomeView> {
     });
 
   }
-  void printMatchedProfilesNames() {
-    for (ProfileModel profile in matchedProfiles) {
+
+  /*void showMatchNotification(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('You matched!'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MessageView(viewModel: _viewModel)),
+                );
+              },
+              child: Text('Go to Messages'),
+            ),
+          ],
+        );
+      },
+    );
+
+    // Close the dialog after 5 seconds
+    Future.delayed(Duration(seconds: 5), () {
+      Navigator.of(context).pop();
+    });
+  }
+*/
+// Inside the condition where a match occurs
+
+
+  void printlikedProfilesNames() {
+    for (ProfileModel profile in likedProfiles) {
       print(profile.dogName);
     }
   }
@@ -401,7 +504,7 @@ class ProfileCard extends StatelessWidget {
                   ),
                 ),
               ),
-            if (profile.personalityTraits.isNotEmpty)
+            if (profile.personalityTraits!.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(left: 25.0, top: 12.0, bottom: 75), // Adjust left padding as needed
                 child: Column(
@@ -411,14 +514,14 @@ class ProfileCard extends StatelessWidget {
                       "Personality Traits:",
                       style: TextStyle(fontFamily: 'Indie Flower', fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    if (profile.personalityTraits.isNotEmpty)
+                    if (profile.personalityTraits!.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.only(left: 20.0), // Adjust left padding as needed
                         child: Wrap(
                           direction: Axis.horizontal,
                           children: [
                             Text(
-                              profile.personalityTraits.join(',  '),
+                              profile.personalityTraits!.join(',  '),
                               style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                             ),
                           ],
@@ -492,6 +595,3 @@ class _ProfileImagePreviewState extends State<ProfileImagePreview> {
     );
   }
 }
-
-
-

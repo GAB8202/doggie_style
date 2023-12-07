@@ -1,24 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:navigation/views/home_view.dart';
+import '../views/home_view.dart';
 import '../view_models/profile_view_model.dart';
 import 'settings_view.dart';
 
 class ProfileView extends StatefulWidget {
+  final ProfileViewModel viewModel;
+
+  ProfileView({Key? key, required this.viewModel}) : super(key: key);
+
   @override
   _ProfileViewState createState() => _ProfileViewState();
 }
 
 class _ProfileViewState extends State<ProfileView> {
   final _formKey = GlobalKey<FormState>();
-  late ProfileViewModel _viewModel;
+  late ProfileViewModel _viewModel = widget.viewModel;
   int currentImageIndex = 0;
   int _selectedIndex = 0; // Track the selected index
 
   @override
   void initState() {
     super.initState();
-    _viewModel = ProfileViewModel();
+    // _viewModel = ProfileViewModel();
     _viewModel.onProfileUpdated = () => setState(() {}); // Set the callback
+    if (_viewModel.profile.personalityTraits != null) {
+      selectedTraits = List.from(_viewModel.profile.personalityTraits!);
+    }
   }
 
   bool _isEdit = true; // Toggle flag
@@ -41,7 +48,7 @@ class _ProfileViewState extends State<ProfileView> {
           ),
           content: Scrollbar(
             thumbVisibility: true,
-             // Ensures that the scrollbar is always visible
+            // Ensures that the scrollbar is always visible
             child: SingleChildScrollView(
               child: ListBody(
                 children: <String>[
@@ -84,136 +91,137 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        onWillPop: () async {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => HomeView()),
-                (Route<dynamic> route) => false,
-          );
-          return false; // Prevents the default back button behavior
-        },
-        child: Scaffold(
-          appBar: AppBar(
-              title: Transform.scale(
-                scale: 2,
-                child: IconButton(
-                  icon: Image.asset('assets/images/DSLogoPaw_white.png'),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => HomeView()),
-                    );
-                  },
-                ),
-              ),
-              centerTitle: true,
-              backgroundColor: const Color(0x64c3e7fd).withOpacity(1),
-              actions: [
-                IconButton(
-                icon:  Icon(Icons.settings,color: Colors.white.withOpacity(1)),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SettingView()),
-                  );
-                },
-              ),
-              ],
+      onWillPop: () async {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => HomeView(viewModel: _viewModel)),
+              (Route<dynamic> route) => false,
+        );
+        return false; // Prevents the default back button behavior
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Transform.scale(
+            scale: 2,
+            child: IconButton(
+              icon: Image.asset('assets/images/DSLogoPaw_white.png'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeView(viewModel: _viewModel)),
+                );
+              },
+            ),
           ),
+          centerTitle: true,
+          backgroundColor: const Color(0x64c3e7fd).withOpacity(1),
+          actions: [
+            IconButton(
+              icon:  Icon(Icons.settings,color: Colors.white.withOpacity(1)),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SettingView(viewModel: _viewModel)),
+                );
+              },
+            ),
+          ],
+        ),
 
-            body:Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        body:Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 5),
+            Row(
               children: [
-                SizedBox(height: 5),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            right: BorderSide(
-                              color: Colors.grey, // Border color for the right side of "Edit"
-                              width: .5, // Border width
-                            ),
-                          ),
-                        ),
-                       child: TextButton(
-                          onPressed: () {
-                            setState(() {
-                              _selectedIndex = 0; // Set the selected index to 0 (Edit)
-                              _isEdit = true; // Switch to Edit view
-                            });
-                          },
-                          child: Text(
-                            'Edit',
-                            style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
-                          ),
-                          style: ButtonStyle(
-                            foregroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-                              return _selectedIndex == 0 ? Colors.black : Colors.grey;
-                            }),
-                          ),
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        right: BorderSide(
+                          color: Colors.grey, // Border color for the right side of "Edit"
+                          width: .5, // Border width
                         ),
                       ),
                     ),
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            left: BorderSide(
-                              color: Colors.grey,
-                              width: .5,
-                            ),
-                          ),
-                        ),
-                        child: TextButton(
-                          onPressed: () {
-                            setState(() {
-                              _selectedIndex = 1;
-                              _isEdit = false;
-                            });
-                          },
-                          child: Text(
-                            'Preview',
-                            style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
-                          ),
-                          style: ButtonStyle(
-                            foregroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-                              return _selectedIndex == 1 ? Colors.black : Colors.grey;
-                            }),
-                          ),
-                        ),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedIndex = 0; // Set the selected index to 0 (Edit)
+                          _isEdit = true; // Switch to Edit view
+                        });
+                      },
+                      child: Text(
+                        'Edit',
+                        style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+                      ),
+                      style: ButtonStyle(
+                        foregroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+                          return _selectedIndex == 0 ? Colors.black : Colors.grey;
+                        }),
                       ),
                     ),
-                  ],
+                  ),
                 ),
                 Expanded(
-                  child: _selectedIndex == 0 ? _buildEditView() : _buildPreviewView(),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        left: BorderSide(
+                          color: Colors.grey,
+                          width: .5,
+                        ),
+                      ),
+                    ),
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedIndex = 1;
+                          _isEdit = false;
+                        });
+                      },
+                      child: Text(
+                        'Preview',
+                        style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+                      ),
+                      style: ButtonStyle(
+                        foregroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+                          return _selectedIndex == 1 ? Colors.black : Colors.grey;
+                        }),
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
+            Expanded(
+              child: _selectedIndex == 0 ? _buildEditView() : _buildPreviewView(),
+            ),
+          ],
+        ),
 
-          //I have thoughts on this positioning but I made the edit for now, Im thinking though
-          //it looks kind of awkward on top of the personality traits
-          //my other idea was to make a whole bottom bar that would be a save button
-          //(you can uncomment the below navigation bar to see what Im talking about)
-          floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-          floatingActionButton: Padding(
-            padding: EdgeInsets.all(16.0),
-            child: FloatingActionButton.extended(
-              backgroundColor: Color(0x64c3e7fd).withOpacity(1),
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
-                  _viewModel.saveProfile();
-                }
-              },
-              label: Text(
-                'Save Profile',
-                style: TextStyle(fontFamily: 'Indie Flower', fontSize: 18, fontWeight: FontWeight.bold,color: Colors.black),
-              ),
+        //I have thoughts on this positioning but I made the edit for now, Im thinking though
+        //it looks kind of awkward on top of the personality traits
+        //my other idea was to make a whole bottom bar that would be a save button
+        //(you can uncomment the below navigation bar to see what Im talking about)
+        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+        floatingActionButton: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: FloatingActionButton.extended(
+            backgroundColor: Color(0x64c3e7fd).withOpacity(1),
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+                _formKey.currentState!.save();
+                _viewModel.saveProfile(_viewModel.profile.email);
+                FocusScope.of(context).unfocus();
+              }
+            },
+            label: Text(
+              'Save Profile',
+              style: TextStyle(fontFamily: 'Indie Flower', fontSize: 18, fontWeight: FontWeight.bold,color: Colors.black),
             ),
           ),
-          /*bottomNavigationBar: Material(
+        ),
+        /*bottomNavigationBar: Material(
             color: const Color(0xc3e7fdff).withOpacity(.5), // Change the background color as needed
             child: InkWell(
               onTap: () {
@@ -235,7 +243,7 @@ class _ProfileViewState extends State<ProfileView> {
               ),
             ),
           ),*/
-        ),
+      ),
     );
   }
 
@@ -251,13 +259,13 @@ class _ProfileViewState extends State<ProfileView> {
             color: Colors.grey[300], // Default background color
             border: Border.all(color: Colors.black),
             borderRadius: BorderRadius.circular(5),
-            image: _viewModel.getImage(imageNumber) != null
+            image: _viewModel.getImage(imageNumber) != 'null'
                 ? DecorationImage(
-              image: AssetImage(_viewModel.getImage(imageNumber)!),
+              image: AssetImage(_viewModel.getImage(imageNumber)),
               fit: BoxFit.cover,
             ) : null,
           ),
-          child: _viewModel.getImage(imageNumber) == null
+          child: _viewModel.getImage(imageNumber) == 'null'
               ? Center(child: Text('Select Image $imageNumber', textAlign: TextAlign.center))
               : SizedBox(),
         ),
@@ -283,7 +291,7 @@ class _ProfileViewState extends State<ProfileView> {
                   ],
                 ),
               ),
-            //crossAxisAlignment: CrossAxisAlignment.start
+              //crossAxisAlignment: CrossAxisAlignment.start
               TextFormField(
                 decoration: InputDecoration(labelText: 'Dog Name',
                     labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
@@ -317,39 +325,41 @@ class _ProfileViewState extends State<ProfileView> {
                 },
               ),
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Dog Size',
-                    labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                decoration: InputDecoration(
+                  labelText: 'Dog Size',
+                  labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
                 items: ['Extra Small', 'Small', 'Medium', 'Large', 'Extra Large']
+                    .where((size) => size.isNotEmpty) // Filter out empty strings
                     .map((size) => DropdownMenuItem(value: size, child: Text(size)))
                     .toList(),
-                value: _viewModel.profile.dogSize ?? null,
+                value: _viewModel.profile.dogSize == '' ? null : _viewModel.profile.dogSize,
                 onChanged: (String? newValue) {
-                  _viewModel.updateDogSize(newValue);
+                  _viewModel.updateDogSize(newValue == 'null' ? null : newValue);
                 },
-                onSaved: (value) => _viewModel.updateDogSize(value),
+                onSaved: (value) => _viewModel.updateDogSize(value == 'null' ? null : value),
               ),
-
               Padding( //this is driving me crazy I can't get it to align to left
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
-                 child: Column(
-                     crossAxisAlignment: CrossAxisAlignment.start,
-                  // textDirection: TextDirection.ltr,
-                   children: <Widget>[
-                     Padding(
-                       padding: const EdgeInsets.only(top: 32.0),
-                       child: Text(
-                         "Personality Traits",
-                         style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey[600]),
-                         textAlign: TextAlign.left, //I can't figure this out
-                       ),
-                     ),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    // textDirection: TextDirection.ltr,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(top: 32.0),
+                        child: Text(
+                          "Personality Traits",
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey[600]),
+                          textAlign: TextAlign.left, //I can't figure this out
+                        ),
+                      ),
 
-                     Text(
-                       "Select up to 3",
-                       style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey[600]),
-                       textAlign: TextAlign.center, //I can't figure this out
-                     ),
-                   ]
+                      Text(
+                        "Select up to 3",
+                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey[600]),
+                        textAlign: TextAlign.center, //I can't figure this out
+                      ),
+                    ]
                 ),
 
               ),
@@ -416,7 +426,7 @@ class _ProfileViewState extends State<ProfileView> {
               style: TextStyle(fontFamily: 'Indie Flower',fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
               children: [
                 TextSpan(
-                  text: '  ${_viewModel.profile.dogName ?? "Not set"}',
+                    text: '  ${_viewModel.profile.dogName ?? "Not set"}',
                     style: TextStyle(fontFamily: 'Oswald',fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black)
                 ),
               ],
@@ -461,9 +471,9 @@ class _ProfileViewState extends State<ProfileView> {
 
           Padding( padding: const EdgeInsets.all(8.0),),
           Text("Personality Traits:",
-              style: TextStyle(fontFamily: 'Indie Flower',fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(fontFamily: 'Indie Flower',fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          if (_viewModel.profile.personalityTraits.isEmpty)
+          if (_viewModel.profile.personalityTraits!.isEmpty)
             Padding(
               padding: const EdgeInsets.only(left: 20.0), // Adjust left padding as needed
               child: Wrap(
@@ -482,7 +492,7 @@ class _ProfileViewState extends State<ProfileView> {
               Padding(
                 padding: const EdgeInsets.only(top: 4.0, left: 32.0),
                 child: Text(
-                  _viewModel.profile.personalityTraits.join(', '),
+                  _viewModel.profile.personalityTraits!.join(', '),
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
               ),
@@ -500,10 +510,10 @@ class _ProfileViewState extends State<ProfileView> {
       _viewModel.profile.imageAsset2,
       _viewModel.profile.imageAsset3,
       _viewModel.profile.imageAsset4,
-    ].where((image) => image != null).toList();
+    ].where((image) => image != 'null').toList();
 
     if (selectedImages.isEmpty) {
-      selectedImages.add('assets/images/DSLogo_white.png');
+      selectedImages.add('assets/images/DSlogo_white.png');
     }
 
     return GestureDetector(
@@ -519,10 +529,12 @@ class _ProfileViewState extends State<ProfileView> {
           borderRadius: BorderRadius.circular(10),
           color: Colors.grey[300],
           image: DecorationImage(
-            image: AssetImage(selectedImages[currentImageIndex]!),
+            image: selectedImages[currentImageIndex] != null
+                ? AssetImage(selectedImages[currentImageIndex]!)
+                : AssetImage('assets/images/DSlogo_white.png'),
             fit: selectedImages[currentImageIndex] == 'assets/images/DSLogo_white.png'
                 ? BoxFit.fitWidth // Set BoxFit to the desired value when the condition is true
-                : BoxFit.cover,
+                : BoxFit.fitWidth,
           ),
         ),
       ),
