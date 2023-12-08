@@ -5,8 +5,8 @@ import 'profile_view.dart';
 import 'dart:io';
 import '../view_models/profile_view_model.dart';
 import 'package:path_provider/path_provider.dart';
-import 'home_view.dart';
-import '../view_models/profile_view_model.dart';
+
+
 
 class StartScreen extends StatefulWidget {
   @override
@@ -17,7 +17,7 @@ class _StartScreenState extends State<StartScreen> {
   bool showLogin = false;
   bool showSignUp = false;
   bool isAppBarBlue = false; // Added a flag to track the blue color
-  var _viewModel = ProfileViewModel();
+  final _viewModel = ProfileViewModel();
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class _StartScreenState extends State<StartScreen> {
         // Add the leading back arrow button
         leading: showLogin || showSignUp
             ? IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () => setState(() {
             showLogin = false;
             showSignUp = false;
@@ -45,7 +45,7 @@ class _StartScreenState extends State<StartScreen> {
           _buildContent(),
           Positioned(
             bottom: 0,
-            child: Container(
+            child: SizedBox(
               width: MediaQuery.of(context).size.width,
               child: Offstage(
                 offstage: MediaQuery.of(context).viewInsets.bottom > 0,
@@ -88,12 +88,12 @@ class _StartScreenState extends State<StartScreen> {
             showLogin = true;
             isAppBarBlue = true; // Set blue color when login is clicked
           }),
-          child: Text('Login', style: TextStyle(color: Colors.grey[800])),
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0x64c3e7fd).withOpacity(1),
           ),
+          child: Text('Login', style: TextStyle(color: Colors.grey[800])),
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         OutlinedButton(
           onPressed: () => setState(() {
             showSignUp = true;
@@ -117,7 +117,7 @@ class _StartScreenState extends State<StartScreen> {
           padding: const EdgeInsets.only(left: 20.0, right: 20.0),
           child: TextFormField(
             controller: emailController,
-            decoration: InputDecoration(labelText: 'Email'),
+            decoration: const InputDecoration(labelText: 'Email'),
           ),
         ),
        // TextFormField(controller: emailController, decoration: InputDecoration(labelText: 'Email')),
@@ -125,11 +125,11 @@ class _StartScreenState extends State<StartScreen> {
         padding: const EdgeInsets.only(left: 20.0, right: 20.0),
             child: TextFormField(
               controller: passwordController,
-              decoration: InputDecoration(labelText: 'Password'),
+              decoration: const InputDecoration(labelText: 'Password'),
               obscureText: true,
             ),
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         ElevatedButton(
           onPressed: () async {
             if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
@@ -138,7 +138,7 @@ class _StartScreenState extends State<StartScreen> {
               final file = File('$path/profile_data.csv');
 
               final profiles = await file.readAsString();
-              final credentials = CsvToListConverter().convert(profiles);
+              final credentials = const CsvToListConverter().convert(profiles);
               bool credentialsExist = credentials.any((row) => row[9] == emailController.text && row[10] == passwordController.text);
 
               if (credentialsExist) {
@@ -164,11 +164,11 @@ class _StartScreenState extends State<StartScreen> {
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: Text('Invalid email or password'),
-                      content: Text('The entered email or password is incorrect.'),
+                      title: const Text('Invalid email or password'),
+                      content: const Text('The entered email or password is incorrect.'),
                       actions: <Widget>[
                         TextButton(
-                          child: Text('OK'),
+                          child: const Text('OK'),
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
@@ -180,12 +180,12 @@ class _StartScreenState extends State<StartScreen> {
               }
             }
           },
-          child: Text('Login', style: TextStyle(color: Colors.grey[800])),
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0x64c3e7fd).withOpacity(1),
           ),
+          child: Text('Login', style: TextStyle(color: Colors.grey[800])),
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         OutlinedButton(
           onPressed: () => setState(() {
             showLogin = false;
@@ -211,32 +211,32 @@ class _StartScreenState extends State<StartScreen> {
           child: TextFormField(
             controller: firstNameController,
            // autofocus: true,
-            decoration: InputDecoration(labelText: 'First Name'),
+            decoration: const InputDecoration(labelText: 'First Name'),
           ),
         ),
         Padding(
           padding: const EdgeInsets.only(left: 20.0, right: 20.0),
           child: TextFormField(
             controller: lastNameController,
-            decoration: InputDecoration(labelText: 'Last Name'),
+            decoration: const InputDecoration(labelText: 'Last Name'),
           ),
         ),
         Padding(
           padding: const EdgeInsets.only(left: 20.0, right: 20.0),
           child: TextFormField(
             controller: emailController,
-            decoration: InputDecoration(labelText: 'Email'),
+            decoration: const InputDecoration(labelText: 'Email'),
           ),
         ),
         Padding(
           padding: const EdgeInsets.only(left: 20.0, right: 20.0),
           child: TextFormField(
             controller: passwordController,
-            decoration: InputDecoration(labelText: 'Password'),
+            decoration: const InputDecoration(labelText: 'Password'),
             obscureText: true,
           ),
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         ElevatedButton(
           onPressed: () async {
             if (firstNameController.text.isNotEmpty &&
@@ -249,11 +249,11 @@ class _StartScreenState extends State<StartScreen> {
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: Text('Invalid Input'),
-                      content: Text('Email or password cannot consist solely of numbers.'),
+                      title: const Text('Invalid Input'),
+                      content: const Text('Email or password cannot consist solely of numbers.'),
                       actions: <Widget>[
                         TextButton(
-                          child: Text('OK'),
+                          child: const Text('OK'),
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
@@ -271,7 +271,7 @@ class _StartScreenState extends State<StartScreen> {
               await file.writeAsString("");
 
               final profiles = await file.readAsString();
-              final emails = CsvToListConverter().convert(profiles);
+              final emails = const CsvToListConverter().convert(profiles);
               bool emailExists = emails.any((row) => row[9] == emailController.text);
 
               if (emailExists) {
@@ -279,11 +279,11 @@ class _StartScreenState extends State<StartScreen> {
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: Text('Email already exists'),
-                      content: Text('An account with this email already exists.'),
+                      title: const Text('Email already exists'),
+                      content: const Text('An account with this email already exists.'),
                       actions: <Widget>[
                         TextButton(
-                          child: Text('OK'),
+                          child: const Text('OK'),
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
@@ -305,29 +305,29 @@ class _StartScreenState extends State<StartScreen> {
               String newCsvData = const ListToCsvConverter().convert(existingProfiles);
               await file.writeAsString("");
               await file.writeAsString(newCsvData, mode: FileMode.append);
-              _viewModel.updateDogAge(newProfile?.dogAge);
-              _viewModel.updateDogBreed(newProfile?.dogBreed);
-              _viewModel.updateDogName(newProfile?.dogName);
-              _viewModel.updateDogSize(newProfile?.dogSize);
-              _viewModel.updateEmail(newProfile?.email);
-              _viewModel.updatePassword(newProfile?.password);
-              _viewModel.updatePersonalityTraits(newProfile?.personalityTraits);
-              _viewModel.updateImage1(newProfile?.imageAsset1);
-              _viewModel.updateImage2(newProfile?.imageAsset2);
-              _viewModel.updateImage3(newProfile?.imageAsset3);
-              _viewModel.updateImage4(newProfile?.imageAsset4);
+              _viewModel.updateDogAge(newProfile.dogAge);
+              _viewModel.updateDogBreed(newProfile.dogBreed);
+              _viewModel.updateDogName(newProfile.dogName);
+              _viewModel.updateDogSize(newProfile.dogSize);
+              _viewModel.updateEmail(newProfile.email);
+              _viewModel.updatePassword(newProfile.password);
+              _viewModel.updatePersonalityTraits(newProfile.personalityTraits);
+              _viewModel.updateImage1(newProfile.imageAsset1);
+              _viewModel.updateImage2(newProfile.imageAsset2);
+              _viewModel.updateImage3(newProfile.imageAsset3);
+              _viewModel.updateImage4(newProfile.imageAsset4);
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => ProfileView(viewModel: _viewModel,)),
               );
             }
           },
-          child: Text('Sign Up', style: TextStyle(color: Colors.grey[800])),
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0x64c3e7fd).withOpacity(1),
           ),
+          child: Text('Sign Up', style: TextStyle(color: Colors.grey[800])),
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         OutlinedButton(
           onPressed: () => setState(() {
             showSignUp = false;

@@ -18,63 +18,6 @@ class ProfileModel {
 
   ProfileModel({this.dogName, this.dogAge, this.dogBreed, this.dogSize, this.imageAsset1, this.imageAsset2, this.imageAsset3,this.imageAsset4, this.personalityTraits = const [], this.email, this.password});
 
-/* List<ProfileModel> profilesData = [
-    ProfileModel(
-      dogName: 'Buddy',
-      dogAge: '3',
-      dogBreed: 'Golden Retriever',
-      dogSize: 'Large',
-      imageAsset1: 'assets/profile_pics/dog1.jpg',
-      imageAsset2: 'assets/profile_pics/dog2.jpg',
-      imageAsset3: 'assets/profile_pics/dog3.jpg',
-      imageAsset4: 'assets/profile_pics/dog5.jpg',
-      personalityTraits: ['Friendly', 'Playful', 'Calm'],
-    ),
-    ProfileModel(
-      dogName: 'Daisy',
-      dogAge: '2',
-      dogBreed: 'Beagle',
-      dogSize: 'Medium',
-      imageAsset1: 'assets/profile_pics/dog6.jpg',
-      imageAsset2: 'assets/profile_pics/dog7.jpg',
-      imageAsset3: 'assets/profile_pics/dog8.jpg',
-      imageAsset4: 'assets/profile_pics/dog9.jpg',
-      personalityTraits: ['Energetic', 'Friendly', 'Kid Friendly'],
-    ),
-    ProfileModel(
-      dogName: 'Rocky',
-      dogAge: '4',
-      dogBreed: 'Siberian Husky',
-      dogSize: 'Large',
-      imageAsset1: 'assets/profile_pics/dog13.jpg',
-      imageAsset2: 'assets/profile_pics/dog14.jpg',
-      imageAsset3: 'assets/profile_pics/dog15.jpg',
-      imageAsset4: 'assets/profile_pics/dog16.jpg',
-      personalityTraits: ['Curious', 'Independent', 'Playful'],
-    ),
-    ProfileModel(
-      dogName: 'Luna',
-      dogAge: '1',
-      dogBreed: 'Labrador Retriever',
-      dogSize: 'Large',
-      imageAsset1: 'assets/profile_pics/dog6.jpg',
-      imageAsset2: 'assets/profile_pics/dog8.jpg',
-      imageAsset3: 'assets/profile_pics/dog9.jpg',
-      imageAsset4: 'assets/profile_pics/dog13.jpg',
-      personalityTraits: ['Gentle', 'Loyal', 'Protective'],
-    ),
-    ProfileModel(
-      dogName: 'Max',
-      dogAge: '5',
-      dogBreed: 'German Shepherd',
-      dogSize: 'Large',
-      imageAsset1: 'assets/profile_pics/dog1.jpg',
-      imageAsset2: 'assets/profile_pics/dog3.jpg',
-      imageAsset3: 'assets/profile_pics/dog5.jpg',
-      imageAsset4: 'assets/profile_pics/dog7.jpg',
-      personalityTraits: ['Energetic', 'Curious', 'Loyal'],
-    ),
-  ];*/
 }
 
 Future<List<ProfileModel>> readProfilesFromCSV() async {
@@ -100,6 +43,74 @@ Future<List<ProfileModel>> readProfilesFromCSV() async {
     profiles.add(profile);
   });
 
+  return profiles;
+}
+
+double calculateSimilarity(ProfileModel dog1, ProfileModel dog2) {
+  const double personalityWeight = 0.5;
+  const double sizeWeight = 0.3;
+  const double ageWeight = 0.2;
+  const double breedWeight = 0.1;
+  final sizeCategories = {
+    'Extra Small': 0,
+    'Small': 1,
+    'Medium': 2,
+    'Large': 3,
+    'Extra Large': 4,
+  };
+  double personalityScore = 0.0;
+  if (dog1.personalityTraits != null && dog2.personalityTraits != null) {
+    for (String trait in dog1.personalityTraits!) {
+      if (dog2.personalityTraits!.contains(trait)) {
+        personalityScore += 1;
+      }
+    }
+    if (dog1.personalityTraits!.isNotEmpty) {
+      personalityScore /= dog1.personalityTraits!.length;
+    }
+  }
+
+  double sizeScore = 0.0;
+  if (dog1.dogSize != null && dog2.dogSize != null &&
+      dog1.dogSize!.isNotEmpty && dog2.dogSize!.isNotEmpty) {
+    int sizeIndex1 = sizeCategories[dog1.dogSize!] ?? -1;
+    int sizeIndex2 = sizeCategories[dog2.dogSize!] ?? -1;
+    if (sizeIndex1 != -1 && sizeIndex2 != -1) {
+      int sizeDifference = (sizeIndex1 - sizeIndex2).abs();
+      sizeScore = 1 - (sizeDifference / 4);
+      sizeScore = sizeScore.clamp(0.0, 1.0);
+    }
+  }
+
+  double ageScore = 0.0;
+  if (dog1.dogAge != null && dog2.dogAge != null &&
+      dog1.dogAge!.isNotEmpty && dog2.dogAge!.isNotEmpty) {
+    int age1 = int.tryParse(dog1.dogAge!) ?? 0;
+    int age2 = int.tryParse(dog2.dogAge!) ?? 0;
+    if (age1 != 0 && age2 != 0) {
+      double ageDifference = (age1 - age2).abs() as double;
+      ageScore = 1 - (ageDifference / 10);
+      ageScore = ageScore.clamp(0.0, 1.0);
+    }
+  }
+
+  double breedScore = dog1.dogBreed != null && dog2.dogBreed != null &&dog1.dogBreed!.isNotEmpty && dog2.dogBreed!.isNotEmpty && dog1.dogBreed == dog2.dogBreed ? 1 : 0;
+
+  double similarityScore = (personalityScore * personalityWeight) +
+      (sizeScore * sizeWeight) +
+      (ageScore * ageWeight) +
+      (breedScore * breedWeight);
+
+  return similarityScore;
+}
+
+List<ProfileModel> sortProfilesBySimilarity(ProfileModel dog1, List<ProfileModel> profiles) {
+  print("in sort");
+  profiles.sort((a, b) {
+    double similarityA = calculateSimilarity(dog1, a);
+    double similarityB = calculateSimilarity(dog1, b);
+    return similarityB.compareTo(similarityA);
+  });
   return profiles;
 }
 

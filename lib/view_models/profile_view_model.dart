@@ -158,11 +158,8 @@ class ProfileViewModel {
     return null;
   }
 
-
-
-
-
-  Future<void> clearProfileDataFile() async {
+  //just used for debugging to reset profiles
+    Future<void> clearProfileDataFile() async {
     final directory = await getApplicationDocumentsDirectory();
     final path = directory.path;
     String filePath = '$path/profile_data.csv';
@@ -171,7 +168,6 @@ class ProfileViewModel {
       File file = File(filePath);
 
       if (await file.exists()) {
-        // Open the file in write mode and write an empty string to clear the contents
         await file.writeAsString('');
         print('Profile data file cleared successfully.');
       } else {
@@ -181,4 +177,6 @@ class ProfileViewModel {
       print('Error clearing profile data file: $e');
     }
   }
+
+
 }

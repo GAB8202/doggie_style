@@ -9,7 +9,7 @@ class SettingView extends StatelessWidget {
   final String title;
   final ProfileViewModel viewModel;
 
-  SettingView({Key? key, this.title = "Doggie Style", required this.viewModel}) : super(key: key);
+  const SettingView({Key? key, this.title = "Doggie Style", required this.viewModel}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,40 +28,39 @@ class SettingView extends StatelessWidget {
             );},
           ),
         ),
-        backgroundColor:  Color(0x64c3e7fd).withOpacity(1),
+        backgroundColor:  const Color(0x64c3e7fd).withOpacity(1),
 
       ),
-      body: Container(
-        child: Column(
+      body: const Column(
           children: [
             //Text("Settings"),
             Padding(
-              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top:25.0),
+              padding: EdgeInsets.only(left: 10.0, right: 10.0, top:25.0),
               child: Text("Location Preference",style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,),
                 textAlign: TextAlign.left),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top:0.0),
+              padding: EdgeInsets.only(left: 10.0, right: 10.0, top:0.0),
               child: DistanceSlider(),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top:25.0),
+              padding: EdgeInsets.only(left: 10.0, right: 10.0, top:25.0),
               child: Text("Notification Preference",style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,),
                   textAlign: TextAlign.left),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top:25.0),
+              padding: EdgeInsets.only(left: 10.0, right: 10.0, top:25.0),
               child: Text("Location",style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,),
                   textAlign: TextAlign.left),
             ),
           ],
         ),
-      ),
+
       floatingActionButton: FloatingActionButton(
 
         onPressed: () => _showLogoutDialog(context),
-        child: Text('Log out', style: TextStyle( fontWeight: FontWeight.bold, fontSize: 16),),
-        backgroundColor:  Color(0x64c3e7fd).withOpacity(1),
+        backgroundColor:  const Color(0x64c3e7fd).withOpacity(1),
+        child: const Text('Log out', style: TextStyle( fontWeight: FontWeight.bold, fontSize: 16),),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
 
@@ -73,17 +72,17 @@ class SettingView extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Log Out'),
-          content: Text('Are you sure you want to log out?'),
+          title: const Text('Log Out'),
+          content: const Text('Are you sure you want to log out?'),
           actions: <Widget>[
             TextButton(
-              child: Text('No'),
+              child: const Text('No'),
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
               },
             ),
             TextButton(
-              child: Text('Yes'),
+              child: const Text('Yes'),
               onPressed: () {
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (context) => StartScreen()),

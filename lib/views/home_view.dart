@@ -16,7 +16,7 @@ int timerLength = 1;
 class HomeView extends StatefulWidget {
   final String title;
   final ProfileViewModel viewModel;
-
+  //ProfileModel userProfile;
 
   HomeView({Key? key, this.title = "Doggie Style", required this.viewModel}) : super(key: key);
 
@@ -24,7 +24,7 @@ class HomeView extends StatefulWidget {
   _HomeViewState createState() => _HomeViewState();
 }
 class _HomeViewState extends State<HomeView> {
-  late ProfileViewModel _viewModel = widget.viewModel;
+  late final ProfileViewModel _viewModel = widget.viewModel;
 
   //List<ProfileModel> profiles = readProfilesFromCSV() as List<ProfileModel>;
 
@@ -43,8 +43,11 @@ class _HomeViewState extends State<HomeView> {
 
   Future<void> initializeProfiles() async {
     List<ProfileModel> profileList = await readProfilesFromCSV();
+    List<ProfileModel> profileList2=sortProfilesBySimilarity(_viewModel.profile, profileList);
     setState(() {
-      profiles = profileList;
+      print("comparing");
+      //profiles=sortProfilesBySimilarity(_viewModel.profile, profileList);
+      profiles = profileList2;
     });
   }
   void showMatchNotification(String dogName) {
@@ -54,7 +57,7 @@ class _HomeViewState extends State<HomeView> {
     });
 
     // Close the notification bar after 5 seconds
-    Future.delayed(Duration(seconds: 5), () {
+    Future.delayed(const Duration(seconds: 5), () {
       setState(() {
         showMatchedNotification = false;
       });
@@ -63,7 +66,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     if (profiles.isEmpty) {
-      return Scaffold(
+      return const Scaffold(
         body: Center(
           child: CircularProgressIndicator(), // Or any other loading indicator
         ),
@@ -88,14 +91,14 @@ class _HomeViewState extends State<HomeView> {
             onPressed: () {},
           ),
         ),
-        backgroundColor:  Color(0x64c3e7fd).withOpacity(1),
+        backgroundColor:  const Color(0x64c3e7fd).withOpacity(1),
         actions: [
           IconButton(
             icon: Icon(Icons.mail_rounded, color: Colors.white.withOpacity(1)),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MessageView(viewModel: _viewModel)),
+                MaterialPageRoute(builder: (context) => MessageView(viewModel: _viewModel, matchedProfiles: matchedProfiles,)),
               );
             },
           ),
@@ -125,8 +128,8 @@ class _HomeViewState extends State<HomeView> {
                           Image.asset(
                             'assets/images/DSlogo_blue.png',
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
+                          const Padding(
+                            padding: EdgeInsets.all(10.0),
                             child: Center(
                               child: Text(
                                   'No more profiles to show!',
@@ -162,16 +165,16 @@ class _HomeViewState extends State<HomeView> {
                       child: Container(
                         width: 100.0,
                         height: 100.0,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           borderRadius: BorderRadius.only(
                             topRight: Radius.circular(100.0),
                           ),
                           color: Colors.red,
                         ),
-                        child: Align(
+                        child: const Align(
                           alignment: Alignment.bottomLeft,
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 25.0, bottom: 25.0),
+                            padding: EdgeInsets.only(left: 25.0, bottom: 25.0),
                             child: Icon(
                               Icons.thumb_down,
                               color: Colors.white,
@@ -216,23 +219,21 @@ class _HomeViewState extends State<HomeView> {
                         }
                       },
                       child: Container(
-                        child: Container(
-                          width: 100.0,
-                          height: 100.0,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(100.0),
-                            ),
-                            color: Colors.green,
+                        width: 100.0,
+                        height: 100.0,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(100.0),
                           ),
-                          child: Align(
-                            alignment: Alignment.bottomRight,
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 25.0, bottom: 25.0),
-                              child: Icon(
-                                Icons.thumb_up,
-                                color: Colors.white,
-                              ),
+                          color: Colors.green,
+                        ),
+                        child: const Align(
+                          alignment: Alignment.bottomRight,
+                          child: Padding(
+                            padding: EdgeInsets.only(right: 25.0, bottom: 25.0),
+                            child: Icon(
+                              Icons.thumb_up,
+                              color: Colors.white,
                             ),
                           ),
                         ),
@@ -256,13 +257,13 @@ class _HomeViewState extends State<HomeView> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => MessageView(viewModel: _viewModel)),
+                        MaterialPageRoute(builder: (context) => MessageView(viewModel: _viewModel, matchedProfiles: matchedProfiles,)),
                       );
 
                     },
                     child: Text(
                       'You matched with $matchedDogName!! Tap to chat',
-                      style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold, fontSize: 25),
+                      style: const TextStyle(color: Colors.white,fontWeight: FontWeight.bold, fontSize: 25),
 
                     ),
                   ),
@@ -388,10 +389,10 @@ class ProfileSwipeView extends StatelessWidget {
 
           background: Container(
             color: Colors.red, // Color for thumbs down
-            child: Align(
+            child: const Align(
               alignment: Alignment.centerLeft,
               child: Padding(
-                padding: const EdgeInsets.only(left: 20.0),
+                padding: EdgeInsets.only(left: 20.0),
                 child: Icon(
                   Icons.thumb_down,
                   color: Colors.white,
@@ -402,10 +403,10 @@ class ProfileSwipeView extends StatelessWidget {
           ),
           secondaryBackground: Container(
             color: Colors.green, // Color for thumbs up
-            child: Align(
+            child: const Align(
               alignment: Alignment.centerRight,
               child: Padding(
-                padding: const EdgeInsets.only(right: 20.0),
+                padding: EdgeInsets.only(right: 20.0),
                 child: Icon(
                   Icons.thumb_up,
                   color: Colors.white,
@@ -431,7 +432,7 @@ class ProfileCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.all(20.0),
+      margin: const EdgeInsets.all(20.0),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -442,15 +443,15 @@ class ProfileCard extends StatelessWidget {
             ),
             if (profile.dogName != "Not set" &&  profile.dogName!.isNotEmpty)
               Padding(
-                padding: EdgeInsets.only(left: 25.0),
+                padding: const EdgeInsets.only(left: 25.0),
                 child: RichText(
                   text: TextSpan(
                     text: 'Dog Name:',
-                    style: TextStyle(fontFamily: 'Indie Flower', fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+                    style: const TextStyle(fontFamily: 'Indie Flower', fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
                     children: [
                       TextSpan(
                         text: '  ${profile.dogName}',
-                        style: TextStyle(fontFamily: 'Oswald', fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black),
+                        style: const TextStyle(fontFamily: 'Oswald', fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black),
                       ),
                     ],
                   ),
@@ -458,15 +459,15 @@ class ProfileCard extends StatelessWidget {
               ),
             if (profile.dogAge != "Not set" &&  profile.dogAge!.isNotEmpty)
               Padding(
-                padding: EdgeInsets.only(left: 25.0),
+                padding: const EdgeInsets.only(left: 25.0),
                 child: RichText(
                   text: TextSpan(
                     text: 'Dog Age:',
-                    style: TextStyle(fontFamily: 'Indie Flower', fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+                    style: const TextStyle(fontFamily: 'Indie Flower', fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
                     children: [
                       TextSpan(
                         text: '  ${profile.dogAge}',
-                        style: TextStyle(fontFamily: 'Oswald', fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black),
+                        style: const TextStyle(fontFamily: 'Oswald', fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black),
                       ),
                     ],
                   ),
@@ -474,15 +475,15 @@ class ProfileCard extends StatelessWidget {
               ),
             if (profile.dogBreed != "Not set"&&  profile.dogBreed!.isNotEmpty )
               Padding(
-                padding: EdgeInsets.only(left: 25.0),
+                padding: const EdgeInsets.only(left: 25.0),
                 child: RichText(
                   text: TextSpan(
                     text: 'Dog Breed:',
-                    style: TextStyle(fontFamily: 'Indie Flower', fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+                    style: const TextStyle(fontFamily: 'Indie Flower', fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
                     children: [
                       TextSpan(
                         text: '  ${profile.dogBreed}',
-                        style: TextStyle(fontFamily: 'Oswald', fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black),
+                        style: const TextStyle(fontFamily: 'Oswald', fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black),
                       ),
                     ],
                   ),
@@ -490,15 +491,15 @@ class ProfileCard extends StatelessWidget {
               ),
             if (profile.dogSize != "Not set" &&  profile.dogSize!.isNotEmpty)
               Padding(
-                padding: EdgeInsets.only(left: 25.0),
+                padding: const EdgeInsets.only(left: 25.0),
                 child: RichText(
                   text: TextSpan(
                     text: 'Dog Size:',
-                    style: TextStyle(fontFamily: 'Indie Flower', fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+                    style: const TextStyle(fontFamily: 'Indie Flower', fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
                     children: [
                       TextSpan(
                         text: '  ${profile.dogSize}',
-                        style: TextStyle(fontFamily: 'Oswald', fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black),
+                        style: const TextStyle(fontFamily: 'Oswald', fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black),
                       ),
                     ],
                   ),
@@ -510,7 +511,7 @@ class ProfileCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       "Personality Traits:",
                       style: TextStyle(fontFamily: 'Indie Flower', fontSize: 18, fontWeight: FontWeight.bold),
                     ),
@@ -522,7 +523,7 @@ class ProfileCard extends StatelessWidget {
                           children: [
                             Text(
                               profile.personalityTraits!.join(',  '),
-                              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                              style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
