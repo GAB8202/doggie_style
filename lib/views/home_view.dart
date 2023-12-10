@@ -43,7 +43,7 @@ class _HomeViewState extends State<HomeView> {
 
   Future<void> initializeProfiles() async {
     List<ProfileModel> profileList = await readProfilesFromCSV();
-    List<ProfileModel> profileList2=sortProfilesBySimilarity(_viewModel.profile, profileList);
+    List<ProfileModel> profileList2=sortProfilesBySimilarity(_viewModel.profile as ProfileModel, profileList);
     setState(() {
       print("comparing");
       //profiles=sortProfilesBySimilarity(_viewModel.profile, profileList);
