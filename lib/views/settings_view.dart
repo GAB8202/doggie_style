@@ -55,15 +55,51 @@ class SettingView extends StatelessWidget {
             ),
           ],
         ),
+      floatingActionButton: _buildFloatingActionButtons(context),
+    );
+  }
 
-      floatingActionButton: FloatingActionButton(
-
-        onPressed: () => _showLogoutDialog(context),
-        backgroundColor:  const Color(0x64c3e7fd).withOpacity(1),
-        child: const Text('Log out', style: TextStyle( fontWeight: FontWeight.bold, fontSize: 16),),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-
+  Widget _buildFloatingActionButtons(BuildContext context) {
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: <Widget>[
+        Positioned(
+          left: 48.0,
+          bottom: 16.0,
+          child: Transform.scale(
+            scale: 1.2,
+            child: FloatingActionButton(
+              heroTag: 'deleteAccountButton',
+              onPressed: () => _showDeleteAccountDialog(context),
+              backgroundColor: const Color(0x64c3e7fd).withOpacity(1),
+              child: FittedBox(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: const Text('Delete Account', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                ),
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          right: 16.0,
+          bottom: 16.0,
+          child: Transform.scale(
+            scale: 1.2,
+            child: FloatingActionButton(
+              heroTag: 'logoutButton',
+              onPressed: () => _showLogoutDialog(context),
+              backgroundColor: const Color(0x64c3e7fd).withOpacity(1),
+              child: FittedBox(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: const Text('Log out', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -84,6 +120,34 @@ class SettingView extends StatelessWidget {
             TextButton(
               child: const Text('Yes'),
               onPressed: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => StartScreen()),
+                      (Route<dynamic> route) => false,
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showDeleteAccountDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete Account'),
+          content: const Text('Are you sure you want to delete your account? This action cannot be undone.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('No'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            TextButton(
+              child: const Text('Yes'),
+              onPressed: () async {
+                await viewModel.deleteProfile();
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (context) => StartScreen()),
                       (Route<dynamic> route) => false,

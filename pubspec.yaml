@@ -73,7 +73,8 @@ flutter:
     - assets/profile_pics/
     - data/profile_data.csv
     - assets/Profiles.csv
-    - assets/images/DSlogo_blue.png
+    - assets/images/DSLogo_blue.png
+    - assets/images/DSLogo_white.png
     #- assets/images/DSLogo_white.png
     #- assets/images/DSLogoPaw_blue.png
     #- assets/images/DSLogoPaw_white.png

@@ -259,13 +259,13 @@ class _ProfileViewState extends State<ProfileView> {
             color: Colors.grey[300], // Default background color
             border: Border.all(color: Colors.black),
             borderRadius: BorderRadius.circular(5),
-            image: _viewModel.getImage(imageNumber) != 'null'
+            image: _viewModel.getImage(imageNumber) != 'null' && _viewModel.getImage(imageNumber) != ''
                 ? DecorationImage(
               image: AssetImage(_viewModel.getImage(imageNumber)),
               fit: BoxFit.cover,
             ) : null,
           ),
-          child: _viewModel.getImage(imageNumber) == 'null'
+          child: _viewModel.getImage(imageNumber) == 'null' || _viewModel.getImage(imageNumber) == ''
               ? Center(child: Text('Select Image $imageNumber', textAlign: TextAlign.center))
               : SizedBox(),
         ),
@@ -510,10 +510,10 @@ class _ProfileViewState extends State<ProfileView> {
       _viewModel.profile.imageAsset2,
       _viewModel.profile.imageAsset3,
       _viewModel.profile.imageAsset4,
-    ].where((image) => image != null && image != 'null').toList();
+    ].where((image) => image != null && image != 'null' && image != '').toList();
 
     if (selectedImages.isEmpty) {
-      selectedImages.add('assets/images/DSlogo_white.png');
+      selectedImages.add('assets/images/DSLogo_white.png');
     }
 
     return GestureDetector(
@@ -531,7 +531,7 @@ class _ProfileViewState extends State<ProfileView> {
           image: DecorationImage(
             image: selectedImages[currentImageIndex] != null
                 ? AssetImage(selectedImages[currentImageIndex]!)
-                : AssetImage('assets/images/DSlogo_white.png'),
+                : AssetImage('assets/images/DSLogo_white.png'),
             fit: selectedImages[currentImageIndex] == 'assets/images/DSLogo_white.png'
                 ? BoxFit.fitWidth // Set BoxFit to the desired value when the condition is true
                 : BoxFit.fitWidth,
