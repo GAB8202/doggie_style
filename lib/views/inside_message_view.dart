@@ -1,22 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:navigation/models/profile_model.dart';
+import 'package:navigation/views/home_view.dart';
+import 'package:navigation/views/message_view.dart';
+import 'package:navigation/views/profile_view.dart';
 import '../models/message_model.dart';
+import '../view_models/profile_view_model.dart';
 
 class InsideMessageView extends StatefulWidget {
   final ProfileModel? profile;
   final String email1;
   final String email2;
   final List<MessageEntry> messages;
+  final List<ProfileModel> matchedProfiles;
+  final ProfileViewModel viewModel;
 
-  InsideMessageView({Key? key, required this.email1, required this.email2, required this.messages, required this.profile}) : super(key: key);
+  InsideMessageView({Key? key, required this.email1, required this.email2, required this.messages, required this.profile, required this.matchedProfiles, required this.viewModel,}) : super(key: key);
 
   @override
   _InsideMessageViewState createState() => _InsideMessageViewState();
 }
-
+// the inside of the message
 class _InsideMessageViewState extends State<InsideMessageView> {
   final TextEditingController _messageController = TextEditingController();
-
+  late final ProfileViewModel _viewModel = widget.viewModel;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +35,7 @@ class _InsideMessageViewState extends State<InsideMessageView> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ProfilePreviewView(profile: widget.profile),
+                  builder: (context) => ProfilePreviewView(profile: widget.profile, matchedProfiles: widget.matchedProfiles, viewModel: widget.viewModel,),
                 ),
               );
             },
@@ -70,7 +76,7 @@ class _InsideMessageViewState extends State<InsideMessageView> {
         children: <Widget>[
           Expanded(
             child: ListView.builder(
-              reverse: true, // Start scrolling from the bottom
+              reverse: true, //scrolling from the bottom
               itemCount: widget.messages.length,
               itemBuilder: (context, index) {
                 var message = widget.messages[index];
@@ -92,7 +98,7 @@ class _InsideMessageViewState extends State<InsideMessageView> {
                     ),
                     child: Text(
                       message.messageContent,
-                      style: const TextStyle(fontSize: 25), // Adjust the font size
+                      style: const TextStyle(fontSize: 25),
                     ),
                   ),
                 );
@@ -110,10 +116,10 @@ class _InsideMessageViewState extends State<InsideMessageView> {
                     decoration: InputDecoration(
                       labelText: 'Type your message here',
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20), // Adjust the border radius as needed
-                        borderSide: const BorderSide(color: Colors.blue, width: 2), // Set the border color and width
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: const BorderSide(color: Colors.blue, width: 2),
                       ),
-                      labelStyle: const TextStyle(fontSize: 25), // Set the label text size
+                      labelStyle: const TextStyle(fontSize: 25),
                       hintStyle: const TextStyle(fontSize: 18),
                     ),
                   ),
@@ -128,7 +134,7 @@ class _InsideMessageViewState extends State<InsideMessageView> {
                         _messageController.text.trim(),
                       );
                       setState(() {
-                        widget.messages.insert(0, newMessage); // Insert at the beginning for reverse scrolling
+                        widget.messages.insert(0, newMessage); //insert at the beginning for reverse scrolling
                       });
                       _messageController.clear();
                     }
@@ -143,17 +149,23 @@ class _InsideMessageViewState extends State<InsideMessageView> {
   }
 }
 
+
+//displaying the profile, similar to in home view
 class ProfilePreviewView extends StatefulWidget {
   final ProfileModel? profile;
+  List<ProfileModel> matchedProfiles;
+  final ProfileViewModel viewModel;
 
-  ProfilePreviewView({Key? key, required this.profile}) : super(key: key);
+  ProfilePreviewView({Key? key, required this.profile, required this.matchedProfiles,  required this.viewModel,}) : super(key: key);
 
   @override
   _ProfilePreviewViewState createState() => _ProfilePreviewViewState();
 }
 
 class _ProfilePreviewViewState extends State<ProfilePreviewView> {
-  int currentImageIndex = 0; // To manage the currently displayed image index
+  int currentImageIndex = 0;
+  late final ProfileViewModel _viewModel = widget.viewModel;
+
 
   @override
   Widget build(BuildContext context) {
@@ -245,7 +257,7 @@ class _ProfilePreviewViewState extends State<ProfilePreviewView> {
 
               if (widget.profile?.personalityTraits != null && widget.profile!.personalityTraits!.isEmpty)
                 const Padding(
-                  padding: EdgeInsets.only(left: 20.0), // Adjust left padding as needed
+                  padding: EdgeInsets.only(left: 20.0),
                   child: Wrap(
                     direction: Axis.horizontal,
                     children: [
@@ -258,7 +270,7 @@ class _ProfilePreviewViewState extends State<ProfilePreviewView> {
                 )
               else if (widget.profile?.personalityTraits != null && widget.profile!.personalityTraits!.isNotEmpty)
                   Padding(
-                    padding: const EdgeInsets.only(left: 25.0, top: 12.0, bottom: 75), // Adjust left padding as needed
+                    padding: const EdgeInsets.only(left: 25.0, top: 12.0, bottom: 75),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -268,7 +280,7 @@ class _ProfilePreviewViewState extends State<ProfilePreviewView> {
                         ),
                         if (widget.profile!.personalityTraits!.isNotEmpty)
                           Padding(
-                            padding: const EdgeInsets.only(left: 20.0), // Adjust left padding as needed
+                            padding: const EdgeInsets.only(left: 20.0),
                             child: Wrap(
                               direction: Axis.horizontal,
                               children: [
@@ -287,8 +299,9 @@ class _ProfilePreviewViewState extends State<ProfilePreviewView> {
         ),
       )
     );
-  }
 
+  }
+  //handles image functionality
   Widget _imagePreview() {
     List<String?> selectedImages = [
       widget.profile?.imageAsset1,
@@ -298,7 +311,7 @@ class _ProfilePreviewViewState extends State<ProfilePreviewView> {
     ].where((image) => image != null && image != 'null').toList();
 
     if (selectedImages.isEmpty) {
-      selectedImages.add('assets/images/DSlogo_white.png');
+      selectedImages.add('assets/images/DSLogo_white.png');
     }
 
     return GestureDetector(
@@ -316,7 +329,7 @@ class _ProfilePreviewViewState extends State<ProfilePreviewView> {
           image: DecorationImage(
             image: selectedImages[currentImageIndex] != null
                 ? AssetImage(selectedImages[currentImageIndex]!)
-                : const AssetImage('assets/images/DSlogo_white.png'),
+                : const AssetImage('assets/images/DSLogo_white.png'),
             fit: selectedImages[currentImageIndex] == 'assets/images/DSLogo_white.png'
                 ? BoxFit.fitWidth
                 : BoxFit.cover,

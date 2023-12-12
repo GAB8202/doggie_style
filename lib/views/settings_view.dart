@@ -5,7 +5,6 @@ import '../view_models/profile_view_model.dart';
 
 
 class SettingView extends StatelessWidget {
-  // Pass the title as a parameter if needed, or just hardcode it inside the widget
   final String title;
   final ProfileViewModel viewModel;
 
@@ -15,7 +14,6 @@ class SettingView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
         centerTitle: true,
         title: Transform.scale(
           scale: 2,
@@ -29,11 +27,9 @@ class SettingView extends StatelessWidget {
           ),
         ),
         backgroundColor:  const Color(0x64c3e7fd).withOpacity(1),
-
       ),
       body: const Column(
           children: [
-            //Text("Settings"),
             Padding(
               padding: EdgeInsets.only(left: 10.0, right: 10.0, top:25.0),
               child: Text("Location Preference",style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,),
@@ -57,13 +53,11 @@ class SettingView extends StatelessWidget {
         ),
 
       floatingActionButton: FloatingActionButton(
-
         onPressed: () => _showLogoutDialog(context),
         backgroundColor:  const Color(0x64c3e7fd).withOpacity(1),
         child: const Text('Log out', style: TextStyle( fontWeight: FontWeight.bold, fontSize: 16),),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-
     );
   }
 
@@ -78,7 +72,7 @@ class SettingView extends StatelessWidget {
             TextButton(
               child: const Text('No'),
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
               },
             ),
             TextButton(

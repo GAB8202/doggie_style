@@ -16,19 +16,18 @@ class _ProfileViewState extends State<ProfileView> {
   final _formKey = GlobalKey<FormState>();
   late ProfileViewModel _viewModel = widget.viewModel;
   int currentImageIndex = 0;
-  int _selectedIndex = 0; // Track the selected index
+  int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    // _viewModel = ProfileViewModel();
-    _viewModel.onProfileUpdated = () => setState(() {}); // Set the callback
+    _viewModel.onProfileUpdated = () => setState(() {});
     if (_viewModel.profile.personalityTraits != null) {
       selectedTraits = List.from(_viewModel.profile.personalityTraits!);
     }
   }
 
-  bool _isEdit = true; // Toggle flag
+  bool _isEdit = true;
   List<bool>isSelected = [true, false];
 
   List<String> allTraits = [
@@ -42,51 +41,82 @@ class _ProfileViewState extends State<ProfileView> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(
-            "Choose a picture",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          content: Scrollbar(
-            thumbVisibility: true,
-            // Ensures that the scrollbar is always visible
-            child: SingleChildScrollView(
-              child: ListBody(
-                children: <String>[
-                  'assets/profile_pics/dog1.jpg',
-                  'assets/profile_pics/dog2.jpg',
-                  'assets/profile_pics/dog5.jpg',
-                  'assets/profile_pics/dog7.jpg',
-                  'assets/profile_pics/dog6.jpg',
-                  'assets/profile_pics/dog8.jpg',
-                  'assets/profile_pics/dog9.jpg',
-                  'assets/profile_pics/dog13.jpg',
-                  'assets/profile_pics/dog14.jpg',
-                  'assets/profile_pics/dog15.jpg',
-                  'assets/profile_pics/dog16.jpg',
-                  // Add more image paths here...
-                ].map((String asset) {
-                  return GestureDetector(
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Image.asset(
-                        asset,
-                        scale: 0.5,
-                      ),
-                    ),
-                    onTap: () {
-                      _viewModel.selectImage(imageNumber, asset);
-                      Navigator.of(context).pop();
-                    },
-                  );
-                }).toList(),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Choose a picture",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
+              //for clearing image
+              TextButton(
+                onPressed: () {
+                  _viewModel.clearImage(imageNumber);
+                  Navigator.of(context).pop();
+                },
+
+                child: Text(
+                  'Clear Image',
+                  style: TextStyle(
+                    color: Colors.red,
+                      fontSize: 18, fontWeight: FontWeight.bold
+                  ),
+                ),
+              ),
+            ],
+          ),
+          //the selection of images
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Wrap(
+                  children: <String>[
+                    'assets/profile_pics/dog1.jpg',
+                    'assets/profile_pics/dog2.jpg',
+                    'assets/profile_pics/dog3.jpg',
+                    'assets/profile_pics/dog4.jpg',
+                    'assets/profile_pics/dog5.jpg',
+                    'assets/profile_pics/dog6.jpg',
+                    'assets/profile_pics/dog7.jpg',
+                    'assets/profile_pics/dog8.jpg',
+                    'assets/profile_pics/dog9.jpg',
+                    'assets/profile_pics/dog10.jpg',
+                    'assets/profile_pics/dog11.jpg',
+                    'assets/profile_pics/dog12.jpg',
+                    'assets/profile_pics/dog13.jpg',
+                    'assets/profile_pics/dog14.jpg',
+                    'assets/profile_pics/dog15.jpg',
+                    'assets/profile_pics/dog16.jpg',
+                    'assets/profile_pics/dog18.jpg',
+                    'assets/profile_pics/dog19.jpg',
+                    'assets/profile_pics/dog20.jpg',
+                  ].map((String asset) {
+                    return GestureDetector(
+                      onTap: () {
+                        _viewModel.selectImage(imageNumber, asset);
+                        Navigator.of(context).pop();
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Image.asset(
+                          asset,
+                          scale: 0.5,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
             ),
           ),
-
         );
       },
     );
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +126,7 @@ class _ProfileViewState extends State<ProfileView> {
           MaterialPageRoute(builder: (context) => HomeView(viewModel: _viewModel)),
               (Route<dynamic> route) => false,
         );
-        return false; // Prevents the default back button behavior
+        return false;
       },
       child: Scaffold(
         appBar: AppBar(
@@ -138,16 +168,16 @@ class _ProfileViewState extends State<ProfileView> {
                     decoration: BoxDecoration(
                       border: Border(
                         right: BorderSide(
-                          color: Colors.grey, // Border color for the right side of "Edit"
-                          width: .5, // Border width
+                          color: Colors.grey,
+                          width: .5,
                         ),
                       ),
                     ),
                     child: TextButton(
                       onPressed: () {
                         setState(() {
-                          _selectedIndex = 0; // Set the selected index to 0 (Edit)
-                          _isEdit = true; // Switch to Edit view
+                          _selectedIndex = 0;
+                          _isEdit = true;
                         });
                       },
                       child: Text(
@@ -199,10 +229,6 @@ class _ProfileViewState extends State<ProfileView> {
           ],
         ),
 
-        //I have thoughts on this positioning but I made the edit for now, Im thinking though
-        //it looks kind of awkward on top of the personality traits
-        //my other idea was to make a whole bottom bar that would be a save button
-        //(you can uncomment the below navigation bar to see what Im talking about)
         floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
         floatingActionButton: Padding(
           padding: EdgeInsets.all(16.0),
@@ -213,6 +239,7 @@ class _ProfileViewState extends State<ProfileView> {
                 _formKey.currentState!.save();
                 _viewModel.saveProfile(_viewModel.profile.email);
                 FocusScope.of(context).unfocus();
+                _showSavedSnackbar();
               }
             },
             label: Text(
@@ -221,28 +248,19 @@ class _ProfileViewState extends State<ProfileView> {
             ),
           ),
         ),
-        /*bottomNavigationBar: Material(
-            color: const Color(0xc3e7fdff).withOpacity(.5), // Change the background color as needed
-            child: InkWell(
-              onTap: () {
-                // Add your save functionality here
-                print('Save button tapped!');
-              },
-              child: Container(
-                height: 60, // Adjust the height of the button bar
-                child: Center(
-                  child: Text(
-                    'Save',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),*/
+
+      ),
+
+    );
+
+  }
+  void _showSavedSnackbar() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Profile Successfully Saved',
+            style: TextStyle(fontFamily: 'Indie Flower', fontSize: 18, fontWeight: FontWeight.bold,color: Colors.black)),
+        backgroundColor: Colors.green,
+        duration: Duration(seconds: 2),
       ),
     );
   }
@@ -256,17 +274,34 @@ class _ProfileViewState extends State<ProfileView> {
           width:  (MediaQuery.of(context).size.width/3)-25,
           margin: EdgeInsets.symmetric(horizontal: 5.0),
           decoration: BoxDecoration(
-            color: Colors.grey[300], // Default background color
+            color: Colors.grey[300],
             border: Border.all(color: Colors.black),
             borderRadius: BorderRadius.circular(5),
-            image: _viewModel.getImage(imageNumber) != 'null'
+            image: _viewModel.getImage(imageNumber) != 'null' && _viewModel.getImage(imageNumber) != ''
                 ? DecorationImage(
               image: AssetImage(_viewModel.getImage(imageNumber)),
               fit: BoxFit.cover,
             ) : null,
+
           ),
-          child: _viewModel.getImage(imageNumber) == 'null'
-              ? Center(child: Text('Select Image $imageNumber', textAlign: TextAlign.center))
+          child: _viewModel.getImage(imageNumber) == 'null' || _viewModel.getImage(imageNumber) == ''
+              ? Center(
+            child: RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                style: TextStyle(fontSize: 16, color: Colors.black),
+                children: [
+                  TextSpan(
+                    text: 'Select Image \n',
+                  ),
+                  TextSpan(
+                    text: '$imageNumber',
+                    style: TextStyle(fontSize: 24, ),
+                  ),
+                ],
+              ),
+            ),
+          )
               : SizedBox(),
         ),
       );
@@ -279,6 +314,7 @@ class _ProfileViewState extends State<ProfileView> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -291,7 +327,6 @@ class _ProfileViewState extends State<ProfileView> {
                   ],
                 ),
               ),
-              //crossAxisAlignment: CrossAxisAlignment.start
               TextFormField(
                 decoration: InputDecoration(labelText: 'Dog Name',
                     labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
@@ -302,7 +337,6 @@ class _ProfileViewState extends State<ProfileView> {
                   }
                 },
               ),
-
               TextFormField(
                 decoration: InputDecoration(labelText: 'Dog Age',
                     labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
@@ -330,7 +364,7 @@ class _ProfileViewState extends State<ProfileView> {
                   labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                 ),
                 items: ['Extra Small', 'Small', 'Medium', 'Large', 'Extra Large']
-                    .where((size) => size.isNotEmpty) // Filter out empty strings
+                    .where((size) => size.isNotEmpty) // filter out empty strings
                     .map((size) => DropdownMenuItem(value: size, child: Text(size)))
                     .toList(),
                 value: _viewModel.profile.dogSize == '' ? null : _viewModel.profile.dogSize,
@@ -339,30 +373,31 @@ class _ProfileViewState extends State<ProfileView> {
                 },
                 onSaved: (value) => _viewModel.updateDogSize(value == 'null' ? null : value),
               ),
-              Padding( //this is driving me crazy I can't get it to align to left
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 8.0),
                 child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    // textDirection: TextDirection.ltr,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(top: 32.0),
-                        child: Text(
-                          "Personality Traits",
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey[600]),
-                          textAlign: TextAlign.left, //I can't figure this out
-                        ),
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20.0, left: 0.0),
+                      child: Text(
+                        "Personality Traits",
+                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey[600]),
+                        textAlign: TextAlign.left,
                       ),
-
-                      Text(
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text(
                         "Select up to 3",
                         style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey[600]),
-                        textAlign: TextAlign.center, //I can't figure this out
+                        textAlign: TextAlign.left,
                       ),
-                    ]
+                    ),
+                  ],
                 ),
-
               ),
+
 
               Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -378,7 +413,6 @@ class _ProfileViewState extends State<ProfileView> {
                             selectedTraits.remove(trait);
                           } else {
                             if (selectedTraits.length >= 3) {
-                              // Remove the first selected trait and add the new one
                               selectedTraits.removeAt(0);
                               selectedTraits.add(trait);
                             } else {
@@ -396,13 +430,13 @@ class _ProfileViewState extends State<ProfileView> {
                   }).toList(),
                 ),
               ),
-              const Divider(
-                height: 20,
-                thickness: 1,
-                indent: 0,
-                endIndent: 0,
-                color: Colors.grey,
-              ),
+            const Divider(
+              height: 20,
+              thickness: 1,
+              indent: 0,
+              endIndent: 0,
+              color: Colors.grey,
+            ),
               SizedBox(height: 20),
 
             ],
@@ -413,7 +447,6 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   Widget _buildPreviewView() {
-    // This is where you display the read-only profile info
     return SingleChildScrollView(
       padding:  EdgeInsets.all(((MediaQuery.of(context).size.width)-300)/2),
       child: Column(
@@ -426,7 +459,7 @@ class _ProfileViewState extends State<ProfileView> {
               style: TextStyle(fontFamily: 'Indie Flower',fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
               children: [
                 TextSpan(
-                    text: '  ${_viewModel.profile.dogName ?? "Not set"}',
+                    text: '  ${_viewModel.profile.dogName?.isNotEmpty ?? false ? _viewModel.profile.dogName : "Not set"}',
                     style: TextStyle(fontFamily: 'Oswald',fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black)
                 ),
               ],
@@ -438,7 +471,7 @@ class _ProfileViewState extends State<ProfileView> {
               style: TextStyle(fontFamily: 'Indie Flower',fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
               children: [
                 TextSpan(
-                    text: '  ${_viewModel.profile.dogAge ?? "Not set"}',
+                    text: '  ${_viewModel.profile.dogAge?.isNotEmpty ?? false ? _viewModel.profile.dogName : "Not set"}',
                     style: TextStyle(fontFamily: 'Oswald',fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black)
                 ),
               ],
@@ -450,7 +483,7 @@ class _ProfileViewState extends State<ProfileView> {
               style: TextStyle(fontFamily: 'Indie Flower',fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
               children: [
                 TextSpan(
-                    text: '  ${_viewModel.profile.dogBreed ?? "Not set"}',
+                    text: '  ${_viewModel.profile.dogBreed?.isNotEmpty ?? false ? _viewModel.profile.dogName : "Not set"}',
                     style: TextStyle(fontFamily: 'Oswald',fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black)
                 ),
               ],
@@ -462,7 +495,7 @@ class _ProfileViewState extends State<ProfileView> {
               style: TextStyle(fontFamily: 'Indie Flower',fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
               children: [
                 TextSpan(
-                    text: '  ${_viewModel.profile.dogSize ?? "Not set"}',
+                    text: '  ${_viewModel.profile.dogSize?.isNotEmpty ?? false ? _viewModel.profile.dogName : "Not set"}',
                     style: TextStyle(fontFamily: 'Oswald',fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black)
                 ),
               ],
@@ -473,20 +506,20 @@ class _ProfileViewState extends State<ProfileView> {
           Text("Personality Traits:",
             style: TextStyle(fontFamily: 'Indie Flower',fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          if (_viewModel.profile.personalityTraits!.isEmpty)
-            Padding(
-              padding: const EdgeInsets.only(left: 20.0), // Adjust left padding as needed
-              child: Wrap(
-                direction: Axis.horizontal,
-                children: [
-                  Text(
-                    'None Selected',
-                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
+          (_viewModel.profile.personalityTraits == null || _viewModel.profile.personalityTraits!.isEmpty || _viewModel.profile.personalityTraits!.every((trait) => trait.isEmpty))
+              ? Padding(
+            padding: const EdgeInsets.only(left: 20.0),
+            child: Wrap(
+              direction: Axis.horizontal,
+              children: [
+                Text(
+                  'None Selected',
+                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
-          Wrap(
+          )
+              : Wrap(
             direction: Axis.horizontal,
             children: [
               Padding(
@@ -498,7 +531,7 @@ class _ProfileViewState extends State<ProfileView> {
               ),
             ],
           ),
-        ],
+    ],
       ),
     );
   }
@@ -510,10 +543,10 @@ class _ProfileViewState extends State<ProfileView> {
       _viewModel.profile.imageAsset2,
       _viewModel.profile.imageAsset3,
       _viewModel.profile.imageAsset4,
-    ].where((image) => image != null && image != 'null').toList();
+    ].where((image) => image != null && image != 'null' && image != '').toList();
 
-    if (selectedImages.isEmpty) {
-      selectedImages.add('assets/images/DSlogo_white.png');
+    if (selectedImages.isEmpty || selectedImages == null) {
+      selectedImages.add('assets/images/DSLogo_white.png');
     }
 
     return GestureDetector(
@@ -531,11 +564,10 @@ class _ProfileViewState extends State<ProfileView> {
           image: DecorationImage(
             image: selectedImages[currentImageIndex] != null
                 ? AssetImage(selectedImages[currentImageIndex]!)
-                : AssetImage('assets/images/DSlogo_white.png'),
+                : AssetImage('assets/images/DSLogo_white.png'),
             fit: selectedImages[currentImageIndex] == 'assets/images/DSLogo_white.png'
-                ? BoxFit.fitWidth // Set BoxFit to the desired value when the condition is true
-                : BoxFit.fitWidth,
-
+                ? BoxFit.fitWidth
+                : BoxFit.cover,
           ),
         ),
       ),

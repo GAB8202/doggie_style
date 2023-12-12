@@ -1,7 +1,5 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
-//import 'package:flutter/physics.dart';
 import 'package:navigation/models/profile_model.dart';
 import '../views/message_view.dart';
 import 'profile_view.dart';
@@ -13,10 +11,10 @@ List<ProfileModel> dislikedProfiles=[];
 List<ProfileModel> matchedProfiles=[];
 int currentProfileIndex = 0;
 int timerLength = 1;
+bool match=false;
 class HomeView extends StatefulWidget {
   final String title;
   final ProfileViewModel viewModel;
-  //ProfileModel userProfile;
 
   HomeView({Key? key, this.title = "Doggie Style", required this.viewModel}) : super(key: key);
 
@@ -26,12 +24,11 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   late final ProfileViewModel _viewModel = widget.viewModel;
 
-  //List<ProfileModel> profiles = readProfilesFromCSV() as List<ProfileModel>;
 
   Color screenBackgroundColor = Colors.transparent; // Track background color
   bool isRemovingProfile = false;
   bool isAddingProfile = false;
-  bool match=false;
+
   bool showMatchedNotification = false;
   String matchedDogName = '';
   List<ProfileModel> profiles=[];
@@ -40,13 +37,12 @@ class _HomeViewState extends State<HomeView> {
     super.initState();
     initializeProfiles();
   }
-
+  // reads in and organizes profiles
   Future<void> initializeProfiles() async {
-    List<ProfileModel> profileList = await readProfilesFromCSV();
-    List<ProfileModel> profileList2=sortProfilesBySimilarity(_viewModel.profile as ProfileModel, profileList);
+    List<ProfileModel> profileList = await _viewModel.readProfilesFromCSV();
+    List<ProfileModel> profileList2=await _viewModel.sortProfilesBySimilarity(_viewModel.profile, profileList);
     setState(() {
       print("comparing");
-      //profiles=sortProfilesBySimilarity(_viewModel.profile, profileList);
       profiles = profileList2;
     });
   }
@@ -56,7 +52,7 @@ class _HomeViewState extends State<HomeView> {
       matchedDogName= dogName;
     });
 
-    // Close the notification bar after 5 seconds
+    //keeps for 5 seconds
     Future.delayed(const Duration(seconds: 5), () {
       setState(() {
         showMatchedNotification = false;
@@ -65,10 +61,11 @@ class _HomeViewState extends State<HomeView> {
   }
   @override
   Widget build(BuildContext context) {
+    //just incase list is not showing
     if (profiles.isEmpty) {
       return const Scaffold(
         body: Center(
-          child: CircularProgressIndicator(), // Or any other loading indicator
+          child: CircularProgressIndicator(),
         ),
       );
     }
@@ -112,6 +109,7 @@ class _HomeViewState extends State<HomeView> {
               color: screenBackgroundColor,
               child: Stack(
                 children: [
+                  //are profiles to swipe on
                   if (currentProfileIndex < profiles.length)
                     ProfileSwipeView(
                       profiles: profiles,
@@ -119,14 +117,16 @@ class _HomeViewState extends State<HomeView> {
                       addCurrentProfileCallback: addCurrentProfile,
                       isRemovingProfile: isRemovingProfile,
                       setScreenState: setScreenState,
+                      homeViewState: this,
                     ),
+                  //when out of profiles to swipe on
                   if (currentProfileIndex == profiles.length)
                     Positioned.fill(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Image.asset(
-                            'assets/images/DSlogo_blue.png',
+                            'assets/images/DSLogo_blue.png',
                           ),
                           const Padding(
                             padding: EdgeInsets.all(10.0),
@@ -147,17 +147,15 @@ class _HomeViewState extends State<HomeView> {
                     child: GestureDetector(
                       onTap: () {
                         if (!isRemovingProfile) {
-                          // Change background color to red for 3 seconds when thumbs down button is clicked
                           setState(() {
                             screenBackgroundColor = Colors.red;
                           });
 
                           Timer(Duration(seconds: timerLength), () {
-                            // Reset background color after 3 seconds
                             setState(() {
                               screenBackgroundColor = Colors.transparent;
                               isRemovingProfile = true;
-                              removeCurrentProfile(); // Remove the profile after 3 seconds
+                              removeCurrentProfile();
                             });
                           });
                         }
@@ -193,7 +191,7 @@ class _HomeViewState extends State<HomeView> {
                           Random random = Random();
                           int randomNumber = random.nextInt(2) + 1;
 
-                          if (randomNumber == 2) {
+                          if (randomNumber == 2) {//random number for 50/50 chance of matching
                             matchedProfiles.add(profiles.elementAt(currentProfileIndex));
                             //printLikedProfilesNames();
                             print(currentProfileIndex);
@@ -203,17 +201,16 @@ class _HomeViewState extends State<HomeView> {
 
                           }
 
-                          // Change background color to green for 2 seconds when thumbs up button is clicked
+                          //green background animation
                           setState(() {
                             screenBackgroundColor = Colors.green;
                           });
 
                           Timer(Duration(seconds: timerLength), () {
-                            // Reset background color after 2 seconds
                             setState(() {
                               screenBackgroundColor = Colors.transparent;
                               isAddingProfile = true;
-                              addCurrentProfile(); // Add the profile after 2 seconds
+                              addCurrentProfile();
                             });
                           });
                         }
@@ -244,6 +241,7 @@ class _HomeViewState extends State<HomeView> {
               ),
             ),
           ),
+          //pop up for matching
           if (showMatchedNotification)
             Positioned(
               top: 0,
@@ -275,7 +273,7 @@ class _HomeViewState extends State<HomeView> {
 
     );
   }
-
+// means they did not like
   void removeCurrentProfile() {
     setState(() {
       profiles.removeAt(currentProfileIndex);
@@ -287,16 +285,13 @@ class _HomeViewState extends State<HomeView> {
       print('Removed');
     });
   }
+  //means they did like
   void addCurrentProfile(){
     likedProfiles.add(profiles.elementAt(currentProfileIndex));
     //removeCurrentProfile();
     printlikedProfilesNames();
     print(currentProfileIndex);
     print('Added');
-
-
-
-
     setState(() {
       profiles.removeAt(currentProfileIndex);
       if (currentProfileIndex == profiles.length-1){
@@ -309,41 +304,14 @@ class _HomeViewState extends State<HomeView> {
 
   }
 
-  /*void showMatchNotification(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('You matched!'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MessageView(viewModel: _viewModel)),
-                );
-              },
-              child: Text('Go to Messages'),
-            ),
-          ],
-        );
-      },
-    );
 
-    // Close the dialog after 5 seconds
-    Future.delayed(Duration(seconds: 5), () {
-      Navigator.of(context).pop();
-    });
-  }
-*/
-// Inside the condition where a match occurs
-
-
+//debugging use
   void printlikedProfilesNames() {
     for (ProfileModel profile in likedProfiles) {
       print(profile.dogName);
     }
   }
+  //for animations liking or not liking
   void setScreenState(bool removingProfile) {
     setState(() {
       isRemovingProfile = removingProfile;
@@ -358,6 +326,7 @@ class ProfileSwipeView extends StatelessWidget {
   final Function addCurrentProfileCallback;
   final bool isRemovingProfile;
   final Function setScreenState;
+  final _HomeViewState homeViewState;
 
   const ProfileSwipeView({
     required this.profiles,
@@ -365,6 +334,7 @@ class ProfileSwipeView extends StatelessWidget {
     required this.addCurrentProfileCallback,
     required this.isRemovingProfile,
     required this.setScreenState,
+    required this.homeViewState,
   });
 
   @override
@@ -373,12 +343,23 @@ class ProfileSwipeView extends StatelessWidget {
       itemCount: profiles.length,
       itemBuilder: (BuildContext context, int index) {
         currentProfileIndex = index;
-
+        //allows for swipe action
         return Dismissible(
           key: Key(profiles[index].dogName!), // Provide a unique key for each profile
           onDismissed: (direction) {
+
             if (direction == DismissDirection.endToStart && !isRemovingProfile) {
               // Swiped left
+              Random random = Random();
+              int randomNumber = random.nextInt(2) + 1;
+
+              if (randomNumber == 2) {
+                matchedProfiles.add(profiles.elementAt(index));
+                print(index);
+                print('Added to matchedProfiles');
+                match = true;
+                homeViewState.showMatchNotification(profiles.elementAt(index).dogName!);
+              }
               setScreenState(true);
               removeCurrentProfileCallback();
             } else if (direction == DismissDirection.startToEnd) {
@@ -386,9 +367,9 @@ class ProfileSwipeView extends StatelessWidget {
               addCurrentProfileCallback();
             }
           },
-
+          //  the like dislike buttons
           background: Container(
-            color: Colors.red, // Color for thumbs down
+            color: Colors.red,
             child: const Align(
               alignment: Alignment.centerLeft,
               child: Padding(
@@ -402,7 +383,7 @@ class ProfileSwipeView extends StatelessWidget {
             ),
           ),
           secondaryBackground: Container(
-            color: Colors.green, // Color for thumbs up
+            color: Colors.green,
             child: const Align(
               alignment: Alignment.centerRight,
               child: Padding(
@@ -428,7 +409,7 @@ class ProfileCard extends StatelessWidget {
   final ProfileModel profile;
 
   const ProfileCard({required this.profile});
-
+  //card makeup, mimiced also in the preview view to give similar look
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -507,7 +488,7 @@ class ProfileCard extends StatelessWidget {
               ),
             if (profile.personalityTraits!.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.only(left: 25.0, top: 12.0, bottom: 75), // Adjust left padding as needed
+                padding: const EdgeInsets.only(left: 25.0, top: 12.0, bottom: 75),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -517,7 +498,7 @@ class ProfileCard extends StatelessWidget {
                     ),
                     if (profile.personalityTraits!.isNotEmpty)
                       Padding(
-                        padding: const EdgeInsets.only(left: 20.0), // Adjust left padding as needed
+                        padding: const EdgeInsets.only(left: 20.0),
                         child: Wrap(
                           direction: Axis.horizontal,
                           children: [
@@ -537,7 +518,7 @@ class ProfileCard extends StatelessWidget {
     );
   }
 }
-
+//handles the images inside the larger cards as they also have the tap functionality
 class ProfileImagePreview extends StatefulWidget {
   final ProfileModel profile;
 
@@ -566,7 +547,7 @@ class _ProfileImagePreviewState extends State<ProfileImagePreview> {
     ].where((image) => image.isNotEmpty).toList();
 
     if (selectedImages.isEmpty) {
-      selectedImages.add('assets/images/DSlogo_blue.png');
+      selectedImages.add('assets/images/DSLogo_blue.png');
     }
   }
   @override
@@ -595,4 +576,5 @@ class _ProfileImagePreviewState extends State<ProfileImagePreview> {
       ),
     );
   }
+
 }

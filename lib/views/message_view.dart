@@ -4,12 +4,15 @@ import '../views/home_view.dart';
 import '../view_models/profile_view_model.dart';
 import '../views/inside_message_view.dart';
 import '../models/message_model.dart'; 
-import '../view_models/message_view_model.dart'; 
+import '../view_models/message_view_model.dart';
 
+
+List<Message> messageList =[];
 class MessageView extends StatefulWidget {
   final String title;
   final ProfileViewModel viewModel;
   final List<ProfileModel> matchedProfiles;
+
 
   const MessageView({Key? key, this.title = "Doggie Style", required this.viewModel,required this.matchedProfiles}) : super(key: key);
 
@@ -19,38 +22,43 @@ class MessageView extends StatefulWidget {
 
 class _MessageViewState extends State<MessageView> {
   late MessageViewModel _messageViewModel;
-
+  late ProfileViewModel _viewModel = widget.viewModel;
+  @override
   @override
   void initState() {
     super.initState();
+    _initializeData();
+  }
+//populates the list of messages
+  void _initializeData() {
+    messageList = [];
     int lastMessage = widget.matchedProfiles.length;
+    if(_viewModel.profile.email=='robertbob@gmail.com'){
+      presentationMatchesFill();
+    } //just used for the demo
+
     String getDogName(ProfileModel profile) {
       lastMessage--;
       return profile.dogName ?? 'No Name';
     }
-
-
-    List<Message> messageList =[];
-
-
-    for(int x=widget.matchedProfiles.length-1; x>=0; x--){
+    //fills with the matches and default hello
+    for (int x = widget.matchedProfiles.length - 1; x >= 0; x--) {
       Message m1;
-      if(lastMessage>0){
+      if (lastMessage > 0) {
         String otherUser = getDogName(widget.matchedProfiles[x]);
 
-        m1=Message(
-            email1: 'user1@example.com',
-            email2: otherUser,
-            messageEntries: [
-              MessageEntry(otherUser, 'Hello!'),
-            ],
-            profile: widget.matchedProfiles[x],
+        m1 = Message(
+          email1: 'user1@example.com',
+          email2: otherUser,
+          messageEntries: [
+            MessageEntry(otherUser, 'Hello!'),
+          ],
+          profile: widget.matchedProfiles[x],
         );
-        //print(m1.profile?.imageAsset1);
+
         messageList.add(m1);
       }
     }
-
 
     _messageViewModel = MessageViewModel(messageList);
 
@@ -99,10 +107,10 @@ class _MessageViewState extends State<MessageView> {
               itemBuilder: (BuildContext context, int index) {
                 var message = _messageViewModel.filteredMessages[index];
                 return SizedBox(
-                  height: 80.0, // Height of the container (button height + space)
+                  height: 80.0,
                   child: Container(
                     width: double.infinity,
-                    margin: const EdgeInsets.only(bottom: 0.0), // Space between buttons
+                    margin: const EdgeInsets.only(bottom: 0.0),
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: ElevatedButton(
@@ -122,6 +130,8 @@ class _MessageViewState extends State<MessageView> {
                                 email2: message.email2,
                                 messages: message.messageEntries,
                                 profile: message.profile,
+                                matchedProfiles: matchedProfiles,
+                                viewModel: widget.viewModel,
                               ),
                             ),
                           );
@@ -184,4 +194,46 @@ class _MessageViewState extends State<MessageView> {
       ),
     );
   }
+
+  //for demo
+  void presentationMatchesFill(){
+    ProfileModel Harper = ProfileModel(
+      dogName: 'Harper',
+      dogSize: 'Small',
+      dogAge: '11',
+      dogBreed: 'Havanese',
+      imageAsset1: 'assets/images/Havanese/dog10.jpg',
+        imageAsset2: 'assets/images/Havanese/dog11.jpg',
+        imageAsset3: 'assets/images/Havanese/dog12.jpg'
+
+    );
+    Message m1=Message(
+      email1: 'user1@example.com',
+      email2: 'Harper',
+      messageEntries: [
+        MessageEntry('Harper', 'Perfect, see you then!'),
+        MessageEntry('user1@example.com', 'Want to meet at Schenley Park?'),
+        MessageEntry('user1@example.com', 'Lets do Saturday then.'),
+        MessageEntry('Harper', 'I can either do Saturday at 2 or Sunday at 12.'),
+        MessageEntry('user1@example.com', 'What day and time work best for you?'),
+        MessageEntry('user1@example.com', 'That sounds like a great idea!'),
+        MessageEntry('Harper', 'Do you want to set up a playdate for them?'),
+        MessageEntry('Harper', 'Our dogs seem very compatible'),
+        MessageEntry('user1@example.com', 'Thank you so much!'),
+        MessageEntry('user1@example.com', 'Hi!'),
+        MessageEntry('Harper', 'Your dog is so cute!'),
+        MessageEntry('Harper', 'Hello!'),
+
+      ],
+      profile: Harper,
+    );
+    if(messageList.contains(m1)){
+
+    }
+    else{
+      messageList.add(m1);
+    }
+
+  }
+
 }
