@@ -75,9 +75,12 @@ flutter:
     - assets/Profiles.csv
     - assets/images/DSLogo_blue.png
     - assets/images/DSLogo_white.png
+<<<<<<< HEAD
     - assets/images/Havanese/dog10.jpg
     - assets/images/Havanese/dog11.jpg
     - assets/images/Havanese/dog12.jpg
+=======
+>>>>>>> ce011d8aca997a29a2145d9b94ca1bc55c207204
     #- assets/images/DSLogo_white.png
     #- assets/images/DSLogoPaw_blue.png
     #- assets/images/DSLogoPaw_white.png
