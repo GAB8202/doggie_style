@@ -75,6 +75,7 @@ flutter:
     - assets/Profiles.csv
     - assets/images/DSLogo_blue.png
     - assets/images/DSLogo_white.png
+    - assets/images/Havanese/
     #- assets/images/DSLogo_white.png
     #- assets/images/DSLogoPaw_blue.png
     #- assets/images/DSLogoPaw_white.png

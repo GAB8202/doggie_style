@@ -255,20 +255,8 @@ class _ProfilePreviewViewState extends State<ProfilePreviewView> {
 
 
 
-              if (widget.profile?.personalityTraits != null && widget.profile!.personalityTraits!.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.only(left: 20.0),
-                  child: Wrap(
-                    direction: Axis.horizontal,
-                    children: [
-                      Text(
-                        'None Selected',
-                        style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                )
-              else if (widget.profile?.personalityTraits != null && widget.profile!.personalityTraits!.isNotEmpty)
+
+               if (widget.profile?.personalityTraits != null && widget.profile!.personalityTraits!.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(left: 25.0, top: 12.0, bottom: 75),
                     child: Column(
@@ -278,7 +266,6 @@ class _ProfilePreviewViewState extends State<ProfilePreviewView> {
                           "Personality Traits:",
                           style: TextStyle(fontFamily: 'Indie Flower', fontSize: 18, fontWeight: FontWeight.bold),
                         ),
-                        if (widget.profile!.personalityTraits!.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(left: 20.0),
                             child: Wrap(

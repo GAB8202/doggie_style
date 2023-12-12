@@ -21,7 +21,7 @@ class _StartScreenState extends State<StartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    //_viewModel.clearProfileDataFile();
+    _viewModel.clearProfileDataFile();
     return Scaffold(
       appBar: AppBar(
 
