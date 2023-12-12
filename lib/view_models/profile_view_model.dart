@@ -309,4 +309,22 @@ read in the csv serving as a backend type simulator
     onProfileUpdated?.call();
   }
 
+  Future<void> deleteProfile() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final path = directory.path;
+    final file = File('$path/profile_data.csv');
+
+    try {
+      String csvContent = await file.readAsString();
+      List<List<dynamic>> rows = const CsvToListConverter().convert(csvContent);
+
+      rows = rows.where((row) => row.isNotEmpty && row[9] != _profile.email).toList();
+
+      String updatedCsvContent = const ListToCsvConverter().convert(rows);
+      await file.writeAsString(updatedCsvContent, mode: FileMode.write);
+    } catch (e) {
+      print("Error occurred while deleting the profile: $e");
+    }
+  }
+
 }
