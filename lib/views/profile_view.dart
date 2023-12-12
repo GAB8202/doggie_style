@@ -471,7 +471,7 @@ class _ProfileViewState extends State<ProfileView> {
               style: TextStyle(fontFamily: 'Indie Flower',fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
               children: [
                 TextSpan(
-                    text: '  ${_viewModel.profile.dogAge?.isNotEmpty ?? false ? _viewModel.profile.dogName : "Not set"}',
+                    text: '  ${_viewModel.profile.dogAge?.isNotEmpty ?? false ? _viewModel.profile.dogAge : "Not set"}',
                     style: TextStyle(fontFamily: 'Oswald',fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black)
                 ),
               ],
@@ -483,7 +483,7 @@ class _ProfileViewState extends State<ProfileView> {
               style: TextStyle(fontFamily: 'Indie Flower',fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
               children: [
                 TextSpan(
-                    text: '  ${_viewModel.profile.dogBreed?.isNotEmpty ?? false ? _viewModel.profile.dogName : "Not set"}',
+                    text: '  ${_viewModel.profile.dogBreed?.isNotEmpty ?? false ? _viewModel.profile.dogBreed : "Not set"}',
                     style: TextStyle(fontFamily: 'Oswald',fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black)
                 ),
               ],
@@ -495,7 +495,7 @@ class _ProfileViewState extends State<ProfileView> {
               style: TextStyle(fontFamily: 'Indie Flower',fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
               children: [
                 TextSpan(
-                    text: '  ${_viewModel.profile.dogSize?.isNotEmpty ?? false ? _viewModel.profile.dogName : "Not set"}',
+                    text: '  ${_viewModel.profile.dogSize?.isNotEmpty ?? false ? _viewModel.profile.dogSize : "Not set"}',
                     style: TextStyle(fontFamily: 'Oswald',fontSize: 30, fontWeight: FontWeight.bold, color: Colors.black)
                 ),
               ],

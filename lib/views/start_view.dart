@@ -21,11 +21,11 @@ class _StartScreenState extends State<StartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _viewModel.clearProfileDataFile();
+    //_viewModel.clearProfileDataFile();
     return Scaffold(
       appBar: AppBar(
 
-        // Add the leading back arrow button
+
         leading: showLogin || showSignUp
             ? IconButton(
           icon: const Icon(Icons.arrow_back),
